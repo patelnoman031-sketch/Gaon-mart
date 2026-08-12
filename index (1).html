@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gaon Mart Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f6f5;color:#17201b}
+header{background:#16834a;color:#fff;padding:18px;font-size:22px;font-weight:700}
+nav{display:flex;gap:8px;overflow:auto;background:#fff;padding:10px;border-bottom:1px solid #ddd}
+nav button{border:0;border-radius:8px;padding:11px 15px;background:#edf5ef;color:#176b3d;white-space:nowrap}.on{background:#16834a!important;color:#fff!important}
+main{max-width:1000px;margin:auto;padding:16px}.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #0001}
+.grid,.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}input,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:6px 0 12px}
+.save{background:#16834a;color:#fff;border:0;border-radius:8px;padding:12px 18px;font-weight:bold}
+.danger{background:#b42318;color:#fff;border:0;border-radius:7px;padding:7px 10px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}.wrap{overflow:auto}
+.hide{display:none}.big{font-size:28px;font-weight:bold}.status{padding:10px;border-radius:8px;background:#fff8e1;margin-bottom:14px}
+@media(max-width:600px){.grid,.row{grid-template-columns:1fr}}
+</style></head><body>
+<header>🛒 Gaon Mart <small style="float:right;font-size:13px;font-weight:400">Admin</small></header>
+<nav><button class="on" onclick="tab('dash',this)">Dashboard</button><button onclick="tab('products',this)">Products</button><button onclick="tab('orders',this)">Orders</button><button onclick="tab('categories',this)">Categories</button><button onclick="tab('delivery',this)">Delivery</button></nav>
+<main><div id="status" class="status">Connecting…</div>
+<section id="dash"><h2>Dashboard</h2><div class="grid"><div class="card">Today's Orders<div class="big" id="orderCount">0</div></div><div class="card">Products<div class="big" id="productCount">0</div></div><div class="card">Pending Orders<div class="big" id="pendingCount">0</div></div><div class="card">Today's Sales<div class="big" id="sales">₹0</div></div></div><div class="card"><b>Service area</b><p>Mosali, Surat, Gujarat + nearby villages</p></div></section>
+
+<section id="products" class="hide"><h2>Products</h2>
+<div class="card"><div class="row"><div><label>Product name</label><input id="pname" placeholder="Tomato"></div><div><label>Category</label><select id="pcat"></select></div></div>
+<label>Description (optional)</label><input id="pdesc" placeholder="Fresh local tomato">
+<button class="save" onclick="addProduct()">Save Product</button></div>
+<div class="card"><h3>Add Variant / Price / Stock</h3><div class="row"><div><label>Product</label><select id="vprod"></select></div><div><label>Variant label</label><input id="vlabel" placeholder="1 kg"></div></div>
+<div class="row"><div><label>Quantity</label><input id="vqty" type="number" placeholder="1"></div><div><label>Unit</label><select id="vunit"><option>kg</option><option>g</option><option>litre</option><option>ml</option><option>piece</option><option>pack</option></select></div></div>
+<div class="row"><div><label>Price ₹</label><input id="vprice" type="number" placeholder="100"></div><div><label>Stock</label><input id="vstock" type="number" placeholder="50"></div></div>
+<button class="save" onclick="addVariant()">Save Variant</button></div>
+<div class="card wrap"><h3>Products</h3><table><thead><tr><th>Product</th><th>Category</th><th>Active</th><th>Action</th></tr></thead><tbody id="productRows"></tbody></table></div>
+<div class="card wrap"><h3>Variants</h3><table><thead><tr><th>Product</th><th>Variant</th><th>Price</th><th>Stock</th></tr></thead><tbody id="variantRows"></tbody></table></div>
+</section>
+
+<section id="orders" class="hide"><h2>Orders</h2><div class="card wrap"><table><thead><tr><th>Date</th><th>Total</th><th>Payment</th><th>Status</th><th>Distance</th></tr></thead><tbody id="orderRows"></tbody></table></div></section>
+<section id="categories" class="hide"><h2>Categories</h2><div class="card" id="catList"></div></section>
+<section id="delivery" class="hide"><h2>Delivery Settings</h2><div class="card"><label>Rate per km ₹</label><input id="rate" type="number"><label>Minimum order ₹</label><input id="minimum" type="number"><label>Free delivery above ₹</label><input id="free" type="number"><button class="save" onclick="saveDelivery()">Save Settings</button></div></section>
+</main>
+<script>
+const URL="https://dayhqgusooffpcvpdfxl.supabase.co";
+const KEY="sb_publishable_YfZ4zPMbCplUIdjTQv8Ciw_7mfLW47w";
+let products=[],variants=[];
+async function api(path,opt={}){const h={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",...(opt.headers||{})};const r=await fetch(URL+"/rest/v1/"+path,{...opt,headers:h});if(!r.ok)throw Error(await r.text());return r.status===204?null:r.json()}
+function tab(id,b){document.querySelectorAll("main section").forEach(x=>x.classList.add("hide"));document.getElementById(id).classList.remove("hide");document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));b.classList.add("on")}
+function msg(t,ok=false){status.textContent=t;status.style.background=ok?"#e8f5e9":"#fff8e1"}
+async function load(){
+ try{
+  const cats=await api("categories?select=*&active=eq.true&order=sort_order,name");
+  pcat.innerHTML=cats.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+  catList.innerHTML=cats.map(x=>`<p>• ${esc(x.name)}</p>`).join("");
+  products=await api("products?select=*&order=name");
+  variants=await api("product_variants?select=*,products(name)&order=created_at.desc");
+  render();
+  const orders=await api("orders?select=*&order=created_at.desc&limit=100");
+  renderOrders(orders);
+  const ds=await api("delivery_settings?select=*&active=eq.true&limit=1");
+  if(ds[0]){rate.value=ds[0].rate_per_km||"";minimum.value=ds[0].minimum_order_value||"";free.value=ds[0].free_delivery_above||""}
+  msg("Connected to Gaon Mart database ✓",true);
+ }catch(e){msg("Connection error: "+e.message)}
+}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function render(){
+ productCount.textContent=products.length;
+ vprod.innerHTML=products.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");
+ productRows.innerHTML=products.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.category_id||"")}</td><td>${x.active?"Yes":"No"}</td><td><button class="danger" onclick="toggleProduct('${x.id}',${x.active})">${x.active?"Disable":"Enable"}</button></td></tr>`).join("");
+ variantRows.innerHTML=variants.map(x=>`<tr><td>${esc(x.products?.name||"")}</td><td>${esc(x.label||"")}</td><td>₹${x.price??""}</td><td>${x.stock??0}</td></tr>`).join("");
+}
+async function addProduct(){
+ const name=pname.value.trim();if(!name||!pcat.value)return alert("Product name and category required");
+ try{const r=await api("products",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({name,category_id:pcat.value,description:pdesc.value.trim(),active:true})});products.push(...r);render();pname.value="";pdesc.value="";alert("Product saved ✓")}catch(e){alert("Save failed: "+e.message)}
+}
+async function addVariant(){
+ if(!vprod.value||!vlabel.value.trim()||!vprice.value)return alert("Product, variant and price required");
+ try{const r=await api("product_variants",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({product_id:vprod.value,label:vlabel.value.trim(),quantity:Number(vqty.value||0),unit:vunit.value,price:Number(vprice.value),stock:Number(vstock.value||0),active:true})});variants.push(...r);render();vlabel.value="";vqty.value="";vprice.value="";vstock.value="";alert("Variant saved ✓")}catch(e){alert("Variant save failed: "+e.message)}
+}
+async function toggleProduct(id,active){try{await api("products?id=eq."+encodeURIComponent(id),{method:"PATCH",body:JSON.stringify({active:!active,updated_at:new Date().toISOString()})});products=products.map(x=>x.id===id?{...x,active:!active}:x);render()}catch(e){alert(e.message)}}
+function renderOrders(o){orderCount.textContent=o.length;pendingCount.textContent=o.filter(x=>["pending","confirmed","preparing","out_for_delivery"].includes(x.order_status)).length;orderRows.innerHTML=o.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString()}</td><td>₹${x.total??0}</td><td>${esc(x.payment_method||"")}</td><td>${esc(x.order_status||"")}</td><td>${x.distance_km??0} km</td></tr>`).join("")}
+async function saveDelivery(){alert("Delivery settings editing will be enabled after selecting the active settings row.");}
+load();
+</script></body></html>
