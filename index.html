@@ -1,39 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Gaon Mart Admin</title>
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:#f4f6f5;color:#17201b}
-header{background:#16834a;color:#fff;padding:18px;font-size:23px;font-weight:700}
-nav{display:flex;gap:8px;overflow:auto;background:#fff;padding:10px;border-bottom:1px solid #ddd}
-nav button{border:0;border-radius:8px;padding:11px 15px;background:#edf5ef;color:#176b3d}
-nav .on{background:#16834a;color:white}
-main{max-width:900px;margin:auto;padding:16px}
-.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #00000012}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-input,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:6px 0 12px;box-sizing:border-box}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-button.save{background:#16834a;color:white;border:0;border-radius:8px;padding:12px 18px;font-weight:bold}
-table{width:100%;border-collapse:collapse}
-th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
-.wrap{overflow:auto}
-.hide{display:none}.big{font-size:28px;font-weight:bold}.muted{color:#667}
-@media(max-width:600px){.grid,.row{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<header>🛒 Gaon Mart <small style="float:right;font-size:13px;font-weight:normal">Admin</small></header>
-<nav>
-<button class="on" onclick="tab('dash',this)">Dashboard</button>
-<button onclick="tab('products',this)">Products</button>
-<button onclick="tab('orders',this)">Orders</button>
-<button onclick="tab('categories',this)">Categories</button>
-<button onclick="tab('delivery',this)">Delivery</button>
-</nav>
-<main>
-<section id="dash">
 <h2>Dashboard</h2>
 <div class="grid">
 <div class="card">Today's Orders<div class="big" id="oc">0</div></div>
@@ -78,14 +42,4 @@ th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;white-space:nowr
 </main>
 <script>
 const products=[];
-function tab(id,b){document.querySelectorAll('main section').forEach(s=>s.classList.add('hide'));document.getElementById(id).classList.remove('hide');document.querySelectorAll('nav button').forEach(x=>x.classList.remove('on'));b.classList.add('on')}
-function add(){
- const n=name.value.trim(),c=cat.value,v=variant.value.trim(),p=price.value,s=stock.value;
- if(!n||!v||!p){alert('Product name, variant and price required');return}
- products.push([n,c,v,p,s||0]); rows.innerHTML=products.map(x=>'<tr><td>'+x[0]+'</td><td>'+x[1]+'</td><td>'+x[2]+'</td><td>₹'+x[3]+'</td><td>'+x[4]+'</td></tr>').join('');
- pc.textContent=products.length;
- name.value='';variant.value='';price.value='';stock.value='';
-}
-</script>
-</body>
-</html>
+function tab(id,b){document.querySelectorAll('main section').forEach(s=>s.classList.add('h
