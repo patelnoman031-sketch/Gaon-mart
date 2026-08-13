@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gaon Mart</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f7f6;color:#17201b;padding-bottom:78px}
+header{position:sticky;top:0;z-index:5;background:#16834a;color:#fff;padding:15px 16px}.logo{font-size:23px;font-weight:700}
+.location{margin-top:8px;background:#fff2;padding:9px;border-radius:8px;font-size:13px}
+main{max-width:700px;margin:auto;padding:14px}.search{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:15px}
+.cats{display:flex;gap:9px;overflow:auto;padding:12px 0}.cats button{white-space:nowrap;border:0;border-radius:20px;padding:9px 14px;background:#e9f4ed;color:#176b3d}.cats .sel{background:#16834a;color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.product,.card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px #0001}.emoji{font-size:42px;text-align:center;padding:10px}.name{font-weight:700}.muted{color:#69736d;font-size:13px}.price{font-weight:700;margin:7px 0}.stock{font-size:12px;margin:5px 0}.stock.ok{color:#176b3d}.stock.low{color:#b54708}.stock.out{color:#b42318;font-weight:700}.disabled{opacity:.5;pointer-events:none}.steps{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}.step{padding:5px 8px;border-radius:7px;background:#eef1ef;color:#66716b;font-size:11px}.step.active{background:#16834a;color:#fff}
+.qty{display:flex;align-items:center;gap:6px}.qty button{border:0;border-radius:8px;background:#e9f4ed;color:#16834a;padding:8px;font-size:17px}.add{flex:1!important;background:#16834a!important;color:white!important;font-size:14px!important}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #ddd;padding:10px;z-index:6}.cartbtn,.primary{width:100%;max-width:700px;display:block;margin:auto;background:#16834a;color:white;border:0;border-radius:10px;padding:14px;font-size:16px;font-weight:700}
+.screen{display:none}.screen.active{display:block}.back{border:0;background:none;font-size:19px;padding:0;margin-bottom:10px}.line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eee}
+.form input{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:6px 0 12px}.pay{display:flex;gap:10px}.pay button{flex:1;padding:12px;border:1px solid #ccc;border-radius:9px;background:white}.pay .active{border:2px solid #16834a;background:#eef8f1}
+.empty{text-align:center;padding:45px 10px;color:#667}.locationBtn{width:100%;padding:12px;border:0;border-radius:9px;background:#16834a;color:white;font-weight:700}
+</style>
+</head>
+<body>
+<header><div class="logo">🛒 Gaon Mart</div><div class="location" id="locationBox">📍 Location not selected</div></header>
+<main>
+<section id="home" class="screen active">
+<button class="primary" style="margin-bottom:10px" onclick="showTracking()">📦 Track My Order</button><input class="search" id="search" placeholder="Search vegetables, grocery..." oninput="render()"><div class="cats" id="cats"></div><div class="grid" id="products"></div>
+</section>
+<section id="cartScreen" class="screen"><button class="back" onclick="show('home')">← Continue Shopping</button><h2>Your Cart</h2><div id="cartList"></div></section>
+<section id="checkout" class="screen">
+<button class="back" onclick="show('cartScreen')">← Back to Cart</button><h2>Checkout</h2>
+<div class="card form">
+<label>Delivery location</label>
+<button type="button" class="locationBtn" onclick="getLocation()">📍 Use my current location</button>
+<div id="locationStatus" class="muted" style="margin:9px 0 12px">Allow location permission when your phone asks.</div>
+<input id="address" placeholder="House / shop, village">
+<label>Mobile number</label><input id="phone" type="tel" inputmode="numeric" placeholder="10 digit mobile number">
+</div>
+<div class="card"><b>Payment</b><div class="pay"><button id="cod" class="active" onclick="payment('COD')">💵 Cash on Delivery</button><button id="upi" onclick="payment('UPI')">📲 UPI</button></div></div>
+<div class="card" id="summary"></div><button class="primary" onclick="placeOrder()">Place Order</button>
+</section>
+
+<section id="tracking" class="screen"><button class="back" onclick="show('home')">← Back to Shop</button><h2>Track Your Order</h2><div class="card form"><label>Mobile number used for the order</label><input id="trackPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"><button class="primary" onclick="trackByPhone()">Track Order</button></div><div id="trackBox" style="margin-top:12px"></div></section>
+</main>
+<div class="bottom"><button class="cartbtn" onclick="openCart()">🛒 Cart (<span id="count">0</span>) · ₹<span id="total">0</span></button></div>
+<script>
+const URL="https://dayhqgusooffpcvpdfxl.supabase.co",KEY="sb_publishable_YfZ4zPMbCplUIdjTQv8Ciw_7mfLW47w";
+let variants=[],cart={},selectedCat="all",payMethod="COD",rate=3.5,customerLat=null,customerLng=null,distanceKm=0;
+
+async function api(path,opt={}){const h={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",...(opt.headers||{})};const r=await fetch(URL+"/rest/v1/"+path,{...opt,headers:h});if(!r.ok)throw Error(await r.text());const t=await r.text();return t?JSON.parse(t):null}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+async function load(){
+ try{
+  const c=await api("categories?select=*&active=eq.true&order=sort_order,name");
+  variants=await api("product_variants?select=*,products(id,name,category_id)&active=eq.true&order=created_at.desc");
+  const settings=await api("delivery_settings?select=*&active=eq.true&limit=1");
+  if(settings[0]&&settings[0].rate_per_km)rate=Number(settings[0].rate_per_km);
+  cats.innerHTML='<button class="sel" onclick="category(\'all\',this)">All</button>'+c.map(x=>`<button onclick="category('${x.id}',this)">${esc(x.name)}</button>`).join("");
+  render();
+ }catch(e){products.innerHTML='<div class="empty">Products will appear here when available.</div>'}
+}
+function category(id,b){selectedCat=id;document.querySelectorAll(".cats button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");render()}
+function render(){
+ let q=search.value.toLowerCase();
+ let a=variants.filter(v=>(selectedCat==="all"||v.products?.category_id===selectedCat)&&((v.products?.name||"")+" "+(v.label||"")).toLowerCase().includes(q));
+ products.innerHTML=a.length?a.map(v=>`<div class="product"><div class="emoji">🛍️</div><div class="name">${esc(v.products?.name)}</div><div class="muted">${esc(v.label)}</div><div class="price">₹${v.price}</div><div class="qty"><button onclick="change('${v.id}',-1)">−</button><b>${cart[v.id]?.qty||0}</b><button onclick="change('${v.id}',1)">+</button><button class="add" onclick="change('${v.id}',1)">Add</button></div></div>`).join(""):'<div class="empty">No products found.</div>';
+ update()
+}
+function change(id,d){const v=variants.find(x=>x.id===id);if(!v)return;cart[id]??={v,qty:0};cart[id].qty=Math.max(0,Math.min(Number(v.stock||9999),cart[id].qty+d));if(!cart[id].qty)delete cart[id];render()}
+function update(){count.textContent=Object.values(cart).reduce((a,x)=>a+x.qty,0);total.textContent=Object.values(cart).reduce((a,x)=>a+x.qty*x.v.price,0).toFixed(0)}
+function openCart(){
+ show("cartScreen");const a=Object.values(cart);
+ cartList.innerHTML=a.length?a.map(x=>`<div class="card line"><span>${esc(x.v.products?.name)}<br><small>${esc(x.v.label)}</small><br>Qty: ${x.qty}</span><b>₹${(x.v.price*x.qty).toFixed(0)}</b></div>`).join("")+'<button class="primary" onclick="showCheckout()">Proceed to Checkout</button>':'<div class="empty">Your cart is empty.</div>'
+}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");scrollTo(0,0)}
+function showCheckout(){if(!Object.keys(cart).length)return;show("checkout");calc()}
+function payment(x){payMethod=x;cod.classList.toggle("active",x==="COD");upi.classList.toggle("active",x==="UPI")}
+function haversine(lat1,lon1,lat2,lon2){const R=6371,p=Math.PI/180,a=Math.sin((lat2-lat1)*p/2)**2+Math.cos(lat1*p)*Math.cos(lat2*p)*Math.sin((lon2-lon1)*p/2)**2;return 2*R*Math.asin(Math.sqrt(a))}
+async function getLocation(){
+ const st=document.getElementById("locationStatus");
+ if(!navigator.geolocation){st.textContent="Your browser does not support location.";return}
+ st.textContent="Getting your location…";
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  customerLat=pos.coords.latitude;customerLng=pos.coords.longitude;
+  const storeLat=21.1269,storeLng=73.0076;
+  try{
+   const r=await fetch(`https://router.project-osrm.org/route/v1/driving/${storeLng},${storeLat};${customerLng},${customerLat}?overview=false`);
+   const j=await r.json();distanceKm=j.routes?.[0]?.distance?j.routes[0].distance/1000:haversine(storeLat,storeLng,customerLat,customerLng);
+  }catch(e){distanceKm=haversine(storeLat,storeLng,customerLat,customerLng)}
+  locationBox.textContent=`📍 Location selected • ${distanceKm.toFixed(1)} km from Mosali`;
+  st.textContent=`Distance calculated automatically. Delivery: ₹${(distanceKm*rate).toFixed(0)}`;
+  calc();
+ },()=>{st.textContent="Location permission denied. Please allow location in browser settings."},{enableHighAccuracy:true,timeout:12000,maximumAge:60000})
+}
+function calc(){const s=Object.values(cart).reduce((a,x)=>a+x.qty*x.v.price,0),d=distanceKm*rate;summary.innerHTML=`<div class="line"><span>Items</span><b>₹${s.toFixed(0)}</b></div><div class="line"><span>Delivery (${distanceKm.toFixed(1)} km)</span><b>₹${d.toFixed(0)}</b></div><div class="line"><span>Total</span><b>₹${(s+d).toFixed(0)}</b></div>`}
+
+const statusLabels={pending:"Order Received",accepted:"Order Accepted",packing:"Packing",out_for_delivery:"Out for Delivery",delivered:"Delivered",cancelled:"Cancelled"}; const statusFlow=["pending","accepted","packing","out_for_delivery","delivered"];
+function showTracking(){show("tracking");const p=localStorage.getItem("gaonmart_last_phone");if(p)document.getElementById("trackPhone").value=p;document.getElementById("trackBox").innerHTML="";}
+async function trackByPhone(){const phone=document.getElementById("trackPhone").value.trim(),box=document.getElementById("trackBox");if(phone.length<10){box.innerHTML='<div class="empty">Please enter a valid 10 digit mobile number.</div>';return;}localStorage.setItem("gaonmart_last_phone",phone);box.innerHTML="Loading orders…";try{const orders=await api("orders?select=id,created_at,order_status,total,delivery_address,phone&phone=eq."+encodeURIComponent(phone)+"&order=created_at.desc&limit=20");if(!orders?.length){box.innerHTML='<div class="empty">No orders found for this mobile number.</div>';return;}box.innerHTML=orders.map(o=>{const cur=o.order_status||"pending",idx=statusFlow.indexOf(cur),steps=cur==="cancelled"?'<div class="steps"><span class="step active" style="background:#b42318;color:#fff">CANCELLED</span></div>':'<div class="steps">'+statusFlow.map((s,i)=>`<span class="step ${i<=idx?"active":""}">${statusLabels[s]}</span>`).join("")+"</div>";return `<div class="card" style="margin-bottom:12px"><b>Order #${esc(o.id.slice(0,8))}</b><div class="muted">${new Date(o.created_at).toLocaleString()}</div><h3>${statusLabels[cur]||cur}</h3>${steps}<p><b>Total:</b> ₹${Number(o.total||0).toFixed(0)}<br><b>Delivery:</b> ${esc(o.delivery_address||"")}</p></div>`}).join("")}catch(e){box.innerHTML='<div class="empty">Could not load orders: '+esc(e.message)+'</div>';}}
+function showTracking(){show("tracking");const p=localStorage.getItem("gaonmart_last_phone");if(p)document.getElementById("trackPhone").value=p;}
+async function placeOrder(){
+ const a=address.value.trim(),p=phone.value.trim();
+ if(!a||p.length<10)return alert("Delivery address and valid mobile number required");
+ if(customerLat===null)return alert("Please select your current location first.");
+ const items=Object.values(cart),s=items.reduce((x,y)=>x+y.qty*y.v.price,0),d=distanceKm*rate;
+ try{
+  const o=(await api("orders",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({delivery_address:a,phone:p,subtotal:s,delivery_charge:d,total:s+d,payment_method:payMethod,order_status:"pending",distance_km:distanceKm,customer_lat:customerLat,customer_lng:customerLng})}))[0];
+  await api("order_items",{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(items.map(x=>({order_id:o.id,product_variant_id:x.v.id,product_name:x.v.products?.name||"Product",variant_label:x.v.label||"",quantity:x.qty,unit_price:x.v.price,line_total:x.qty*x.v.price})))}); 
+  localStorage.setItem("gaonmart_last_phone",p);alert("Order placed successfully! Order ID: "+o.id);cart={};update();show("tracking");document.getElementById("trackPhone").value=p;trackByPhone();
+ }catch(e){alert("Order failed: "+e.message)}
+}
+load();
+</script>
+</body></html>
