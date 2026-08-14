@@ -1,0 +1,1336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="build" content="gaon-mart-admin-login-ui-v34-2026-08-14">
+<title>Gaon Mart — Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f5;color:#17201b}
+header{background:#16834a;color:#fff;padding:18px;font-size:22px;font-weight:700}
+header small{float:right;font-size:13px;font-weight:400}
+nav{display:flex;gap:8px;overflow-x:auto;background:#fff;padding:10px;position:sticky;top:0;z-index:5}
+nav button{border:0;border-radius:10px;padding:12px 16px;background:#edf5ef;color:#176b3d;white-space:nowrap;font-size:15px}
+nav button.on{background:#16834a;color:#fff}
+main{max-width:1000px;margin:auto;padding:16px}
+.status{padding:12px;border-radius:10px;background:#fff8e1;margin-bottom:14px}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #0001}
+.grid,.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.statGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px #0001}
+.big{font-size:28px;font-weight:700;margin-top:5px}
+.muted{color:#69736d;font-size:12px}
+input,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:6px 0 12px;background:#fff}
+button.save{border:0;border-radius:8px;padding:10px 14px;background:#16834a;color:#fff;font-weight:700}
+button.warn{background:#fff4e5;color:#8a4b00}
+button.danger{background:#b42318;color:#fff}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
+.wrap{overflow:auto}
+[hidden]{display:none!important}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#e8f5e9;color:#176b3d;font-size:12px;font-weight:700}
+.low{color:#b54708;font-weight:700}
+.out{color:#b42318;font-weight:700}
+.notice{padding:12px;border-radius:8px;background:#f8faf8}
+.stock-row-actions{display:flex;gap:6px}
+.login-chip{font-size:12px;opacity:.95}.admin-logged{display:inline-block!important}\n@media(max-width:700px){
+ .grid,.row{grid-template-columns:1fr}
+ .statGrid{grid-template-columns:1fr 1fr}
+ th,td{padding:8px}
+}
+</style>
+</head>
+<body>
+<div id="loginGate" style="display:flex;position:fixed;inset:0;z-index:9999;background:#f4f6f5;align-items:center;justify-content:center;padding:18px">
+  <div class="card" style="width:100%;max-width:440px">
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:42px">🛒</div>
+      <h2 style="margin:4px 0">Gaon Mart Admin</h2>
+      <div class="muted">Secure Admin Access</div>
+    </div>
+    <label>Login with</label>
+    <select id="loginType">
+      <option value="email">📧 Email</option>
+      <option value="phone">📱 Mobile Number</option>
+    </select>
+    <label id="identityLabel">Admin Email</label>
+    <input id="loginIdentity" autocomplete="username" placeholder="admin@example.com">
+    <label>Password</label>
+    <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter password">
+    <button class="save" id="loginBtn" style="width:100%;padding:13px">🔐 Login to Admin</button>
+    <button class="save" id="forgotBtn" style="width:100%;margin-top:8px;background:#edf5ef!important;color:#176b3d!important">Forgot Password</button>
+    <div id="loginMsg" class="muted" style="margin-top:10px;text-align:center"></div>
+  </div>
+</div>
+
+<header>🛒 Gaon Mart <small><span id="adminUserLabel">Admin Panel</span> <button id="headerLoginBtn" class="save" style="margin-left:6px;padding:6px 9px;background:#fff;color:#16834a">Login</button> <button id="logoutBtn" class="danger" style="margin-left:6px;padding:6px 9px;display:none">Logout</button></small></header>
+
+<nav>
+<button class="on" data-tab="dash">Dashboard</button>
+<button data-tab="products">Products</button>
+<button data-tab="stock">📦 Stock</button>
+<button data-tab="orders">Orders</button>
+<button data-tab="categories">Categories</button>
+<button data-tab="customers">Customers</button>
+<button data-tab="banners">Banners</button>
+<button data-tab="delivery">Delivery</button>
+</nav>
+
+<main id="adminContent" style="display:none">
+<div id="status" class="status">Connecting to database…</div>
+
+<section id="dash" hidden>
+<div class="card">
+  <b>🔐 Admin Account</b>
+  <div class="muted" style="margin-top:5px">Logged in account: <span id="dashboardAdminEmail">—</span></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button class="save" id="dashboardLoginBtn">Login / Switch Account</button>
+    <button class="save danger" id="dashboardLogoutBtn">Logout</button>
+  </div>
+</div>
+<h2>Dashboard</h2>
+<div class="statGrid">
+ <div class="stat"><div>Today's Orders</div><div class="big" id="todayOrders">0</div></div>
+ <div class="stat"><div>Pending</div><div class="big" id="pendingOrders">0</div></div>
+ <div class="stat"><div>Today's Sales</div><div class="big" id="todaySales">₹0</div></div>
+ <div class="stat"><div>Low Stock</div><div class="big" id="dashboardLowStock">0</div></div>
+</div>
+<div class="card">
+<b>Service area</b>
+<p>Mosali, Surat, Gujarat + nearby villages</p>
+<button class="save" id="refreshDashboard">↻ Refresh Dashboard</button>
+</div>
+</section>
+
+<section id="products" hidden>
+<h2>Products</h2>
+<div class="card">
+<div class="row">
+<div><label>Product name</label><input id="name" placeholder="Tomato"></div>
+<div><label>Category</label><select id="cat"></select></div>
+</div>
+<div class="row">
+<div><label>Variant / quantity</label><input id="variant" placeholder="1 kg"></div>
+<div><label>MRP ₹ (optional)</label><input id="productMrp" type="number" min="0" placeholder="120"></div>
+</div>
+<div class="row">
+<div><label>Offer / Selling Price ₹</label><input id="price" type="number" min="0" placeholder="100"></div>
+<div><label>Stock</label><input id="productStock" type="number" min="0" placeholder="50"></div>
+</div>
+<label>Description</label>
+<input id="productDescription" placeholder="e.g. Taza dehati tamatar, khet se seedha">
+<label>Photo</label>
+<input id="productPhoto" type="file" accept="image/*">
+<div id="productPhotoPreview" style="margin:8px 0"></div>
+<div style="display:flex;gap:8px">
+<button class="save" id="saveProduct">Save Product</button>
+<button class="save" id="cancelEditProduct" style="display:none;background:#edf5ef;color:#176b3d">Cancel Edit</button>
+</div>
+</div>
+<div class="card">
+<input id="productSearch" placeholder="🔍 Product ya category search karein…">
+</div>
+<div class="card wrap">
+<table>
+<thead><tr><th>Photo</th><th>Product</th><th>Category</th><th>Variant</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="productRows"></tbody>
+</table>
+</div>
+</section>
+
+<section id="stock">
+<h2>📦 Stock Management</h2>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+<div>
+<b>Inventory</b>
+<div class="muted">Stock is deducted automatically when an order is accepted.</div>
+</div>
+<button class="save" id="refreshStock">↻ Refresh Stock</button>
+</div>
+</div>
+
+<div class="statGrid">
+ <div class="stat"><div class="muted">Products</div><div class="big" id="stockProducts">0</div></div>
+ <div class="stat"><div class="muted">Total Units</div><div class="big" id="stockUnits">0</div></div>
+ <div class="stat"><div class="muted">Low Stock</div><div class="big" id="stockLowCount">0</div></div>
+ <div class="stat"><div class="muted">Out of Stock</div><div class="big" id="stockOutCount">0</div></div>
+</div>
+
+<div class="card wrap">
+<table>
+<thead>
+<tr><th>Product</th><th>Variant</th><th>Price</th><th>Current Stock</th><th>Status</th><th>Adjust</th></tr>
+</thead>
+<tbody id="stockRows">
+<tr><td colspan="6">Stock will appear here.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="orders" hidden>
+<h2>Orders <button class="save" style="float:right" id="refreshOrders">↻ Refresh</button></h2>
+<div class="card">
+<input id="orderSearch" placeholder="🔍 Order ID, phone ya address search karein…">
+</div>
+<div id="orderList"></div>
+</section>
+
+<section id="customers" hidden>
+<h2>Customers</h2>
+<div class="card">
+<input id="customerSearch" placeholder="🔍 Naam ya phone search karein…">
+</div>
+<div id="customerList" class="card">Loading…</div>
+</section>
+
+<section id="banners" hidden>
+<h2>Offer Banners</h2>
+<div class="card">
+<label>Banner title (optional)</label>
+<input id="bannerTitle" placeholder="e.g. Diwali Dhamaka Offer">
+<label>Banner Photo</label>
+<input id="bannerPhoto" type="file" accept="image/*">
+<div id="bannerPhotoPreview" style="margin:8px 0"></div>
+<button class="save" id="saveBanner">Add Banner</button>
+</div>
+<div class="card wrap" id="bannerList">Loading…</div>
+</section>
+
+<section id="categories" hidden>
+<h2>Categories</h2>
+<div class="card">
+<label>New category name</label>
+<input id="newCategoryName" placeholder="e.g. Fruits">
+<button class="save" id="addCategoryBtn">Add Category</button>
+</div>
+<div class="card" id="catList">Loading…</div>
+</section>
+
+<section id="delivery" hidden>
+<h2>Delivery Settings</h2>
+<div class="card">
+<label>Store Location (dukaan ki exact jagah)</label>
+<div class="row">
+<div><label>Latitude</label><input id="storeLat" type="number" step="0.000001" placeholder="21.170240"></div>
+<div><label>Longitude</label><input id="storeLng" type="number" step="0.000001" placeholder="72.831062"></div>
+</div>
+<button class="save" id="getMyLocation" style="background:#edf5ef;color:#176b3d">📍 Dukaan ki current location use karein</button>
+<div id="storeLocationMsg" class="muted" style="margin-top:6px"></div>
+<hr style="margin:14px 0;border:none;border-top:1px solid #eee">
+<label>Delivery charge per km ₹</label>
+<input id="deliveryRate" value="3.50" type="number" min="0" step="0.01">
+<label>Minimum order value ₹</label>
+<input id="minOrderValue" value="0" type="number" min="0" step="0.01">
+<button class="save" id="saveDelivery">Save Settings</button>
+<div id="deliverySettingsMsg" class="muted" style="margin-top:8px"></div>
+</div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+
+const SUPABASE_URL = "https://dayhqgusooffpcvpdfxl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YfZ4zPMbCplUIdjTQv8Ciw_7mfLW47w";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function requireAdminSession(){
+  const {data:{session}} = await supabaseClient.auth.getSession();
+  const gate=document.getElementById("loginGate");
+  const content=document.getElementById("adminContent");
+  const loginBtn=document.getElementById("headerLoginBtn");
+  const logoutBtn=document.getElementById("logoutBtn");
+  const userLabel=document.getElementById("adminUserLabel");
+
+  if(!session){
+    gate.style.display="flex";
+    content.style.display="none";
+    loginBtn.style.display="inline-block";
+    logoutBtn.style.display="none";
+    userLabel.textContent="Admin Panel";
+    return false;
+  }
+
+  gate.style.display="none";
+  content.style.display="block";
+  loginBtn.style.display="none";
+  logoutBtn.style.display="inline-block";
+  const identity=session.user.email || session.user.phone || "Admin";
+  userLabel.textContent=identity;
+  const dashIdentity=document.getElementById("dashboardAdminEmail");
+  if(dashIdentity) dashIdentity.textContent=identity;
+  window.__SUPABASE_ACCESS_TOKEN=session.access_token;
+  return true;
+}
+
+
+function updateLoginTypeUI(){
+  const type=document.getElementById("loginType").value;
+  const label=document.getElementById("identityLabel");
+  const input=document.getElementById("loginIdentity");
+  if(type==="phone"){
+    label.textContent="Admin Mobile Number";
+    input.placeholder="e.g. 9876543210";
+    input.inputMode="tel";
+  }else{
+    label.textContent="Admin Email";
+    input.placeholder="admin@example.com";
+    input.inputMode="email";
+  }
+}
+
+async function adminLogin(){
+  const type=document.getElementById("loginType").value;
+  let identity=document.getElementById("loginIdentity").value.trim();
+  if(type==="phone"){
+    identity=identity.replace(/\D/g,"");
+    if(identity.length===10) identity="+91"+identity;
+  }
+  const password=document.getElementById("loginPassword").value;
+  const msg=document.getElementById("loginMsg");
+
+  if(!identity || !password){
+    msg.textContent="Email/mobile and password required.";
+    return;
+  }
+
+  msg.textContent="Signing in…";
+  try{
+    const payload = type==="phone"
+      ? {phone: identity, password: password}
+      : {email: identity, password: password};
+
+    const {error}=await supabaseClient.auth.signInWithPassword(payload);
+    if(error) throw error;
+
+    const ok=await requireAdminSession();
+    if(!ok) throw new Error("Login session was not created.");
+    msg.textContent="";
+    await initialize();
+  }catch(e){
+    msg.textContent="Login failed: "+e.message;
+  }
+}
+
+async function forgotPassword(){
+  const type=document.getElementById("loginType").value;
+  const identity=document.getElementById("loginIdentity").value.trim();
+  const msg=document.getElementById("loginMsg");
+
+  if(type!=="email"){
+    msg.textContent="Password reset link email se hi bheja jayega. Pehle Email select karein.";
+    return;
+  }
+  if(!identity){
+    msg.textContent="Admin email enter karein.";
+    return;
+  }
+
+  try{
+    const {error}=await supabaseClient.auth.resetPasswordForEmail(identity,{
+      redirectTo: window.location.href
+    });
+    if(error) throw error;
+    msg.textContent="Password reset email sent.";
+  }catch(e){
+    msg.textContent="Reset failed: "+e.message;
+  }
+}
+
+async function logoutAdmin(){
+  await supabaseClient.auth.signOut();
+  window.location.reload();
+}
+
+
+let productVariants = [];
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, function(m){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];
+  });
+}
+
+async function api(path, options){
+  options = options || {};
+  const headers = Object.assign({
+    "apikey": SUPABASE_KEY,
+    "Authorization": "Bearer " + (window.__SUPABASE_ACCESS_TOKEN || SUPABASE_KEY),
+    "Content-Type": "application/json"
+  }, options.headers || {});
+  const response = await fetch(SUPABASE_URL + "/rest/v1/" + path, Object.assign({}, options, {headers}));
+  const text = await response.text();
+  if(!response.ok) throw new Error(text || ("HTTP " + response.status));
+  return text ? JSON.parse(text) : null;
+}
+
+function setStatus(message, ok){
+  const el = document.getElementById("status");
+  el.textContent = message;
+  el.style.background = ok ? "#e8f5e9" : "#fff8e1";
+}
+
+async function showTab(id){
+  document.querySelectorAll("main section").forEach(function(section){
+    section.hidden = section.id !== id;
+  });
+
+  const target = document.getElementById(id);
+  if(target) target.hidden = false;
+
+  document.querySelectorAll("nav button").forEach(function(button){
+    button.classList.toggle("on", button.dataset.tab === id);
+  });
+
+  if(id === "stock") loadStock();
+  if(id === "orders") loadOrders();
+  if(id === "products") loadProducts();
+  if(id === "categories") loadCategories();
+  if(id === "dash") loadDashboard();
+  if(id === "delivery") loadDeliverySettings();
+  if(id === "customers") loadCustomers();
+  if(id === "banners") loadBanners();
+}
+
+(function setupSwipeNavigation(){
+  const main = document.querySelector("main");
+  let startX = 0, startY = 0, touching = false;
+
+  main.addEventListener("touchstart", function(e){
+    if(e.touches.length !== 1) return;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    touching = true;
+  }, {passive:true});
+
+  main.addEventListener("touchend", function(e){
+    if(!touching) return;
+    touching = false;
+    const endX = e.changedTouches[0].clientX;
+    const endY = e.changedTouches[0].clientY;
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+
+    // Ignore mostly-vertical swipes (user is scrolling the page)
+    if(Math.abs(deltaX) < 60 || Math.abs(deltaX) < Math.abs(deltaY) * 1.5) return;
+
+    const tabs = Array.from(document.querySelectorAll("nav button")).map(function(b){ return b.dataset.tab; });
+    const current = document.querySelector("nav button.on");
+    const currentIndex = current ? tabs.indexOf(current.dataset.tab) : 0;
+
+    let nextIndex = currentIndex;
+    if(deltaX < 0 && currentIndex < tabs.length - 1) nextIndex = currentIndex + 1; // swipe left → next tab
+    if(deltaX > 0 && currentIndex > 0) nextIndex = currentIndex - 1; // swipe right → previous tab
+
+    if(nextIndex !== currentIndex) showTab(tabs[nextIndex]);
+  }, {passive:true});
+})();
+
+let deliverySettingsId = null;
+
+async function loadDeliverySettings(){
+  const msg = document.getElementById("deliverySettingsMsg");
+  msg.textContent = "Loading…";
+  try{
+    const rows = await api("delivery_settings?select=id,rate_per_km,minimum_order_value,store_lat,store_lng&limit=1");
+    if(rows && rows[0]){
+      deliverySettingsId = rows[0].id;
+      document.getElementById("deliveryRate").value = rows[0].rate_per_km;
+      document.getElementById("minOrderValue").value = rows[0].minimum_order_value;
+      document.getElementById("storeLat").value = rows[0].store_lat ?? "";
+      document.getElementById("storeLng").value = rows[0].store_lng ?? "";
+      msg.textContent = "";
+    }else{
+      msg.textContent = "No delivery settings row found in database.";
+    }
+  }catch(error){
+    msg.textContent = "Load failed: " + error.message;
+  }
+}
+
+function useMyLocationForStore(){
+  const btn = document.getElementById("getMyLocation");
+  const msg = document.getElementById("storeLocationMsg");
+
+  if(!navigator.geolocation){
+    msg.textContent = "Yeh phone/browser location support nahi karta.";
+    return;
+  }
+
+  btn.textContent = "Location le rahe hain…";
+  msg.textContent = "";
+
+  navigator.geolocation.getCurrentPosition(function(position){
+    document.getElementById("storeLat").value = position.coords.latitude.toFixed(6);
+    document.getElementById("storeLng").value = position.coords.longitude.toFixed(6);
+    btn.textContent = "📍 Dukaan ki current location use karein";
+    msg.textContent = "Location mil gayi ✓ — ab neeche 'Save Settings' dabakar save karein.";
+  }, function(error){
+    btn.textContent = "📍 Dukaan ki current location use karein";
+    msg.textContent = "Location le nahi paye: " + error.message + " (Location permission allow karein aur dukaan ke andar/paas se try karein)";
+  }, {enableHighAccuracy:true, timeout:15000});
+}
+
+async function saveDeliverySettings(){
+  const rate = Number(document.getElementById("deliveryRate").value);
+  const minOrder = Number(document.getElementById("minOrderValue").value);
+  const latRaw = document.getElementById("storeLat").value;
+  const lngRaw = document.getElementById("storeLng").value;
+  const storeLat = latRaw === "" ? null : Number(latRaw);
+  const storeLng = lngRaw === "" ? null : Number(lngRaw);
+  const msg = document.getElementById("deliverySettingsMsg");
+
+  if(!Number.isFinite(rate) || rate < 0 || !Number.isFinite(minOrder) || minOrder < 0){
+    alert("Please enter valid numbers for rate and minimum order value.");
+    return;
+  }
+  if((storeLat !== null && !Number.isFinite(storeLat)) || (storeLng !== null && !Number.isFinite(storeLng))){
+    alert("Store location valid number honi chahiye, ya khali chhod dein.");
+    return;
+  }
+
+  if(!deliverySettingsId){
+    alert("Settings row not loaded yet. Please wait and try again.");
+    return;
+  }
+
+  try{
+    const updated = await api("delivery_settings?id=eq." + encodeURIComponent(deliverySettingsId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=representation"},
+      body:JSON.stringify({rate_per_km:rate, minimum_order_value:minOrder, store_lat:storeLat, store_lng:storeLng})
+    });
+
+    if(!updated || !updated.length){
+      msg.textContent = "Save nahi hua — Supabase me delivery_settings table ki UPDATE permission (RLS policy) missing lagti hai.";
+      return;
+    }
+
+    msg.textContent = "Saved ✓";
+    setTimeout(function(){ msg.textContent = ""; }, 3000);
+  }catch(error){
+    msg.textContent = "Save failed: " + error.message;
+  }
+}
+
+document.querySelectorAll("nav button").forEach(function(button){
+  button.addEventListener("click", function(){ showTab(button.dataset.tab); });
+});
+
+async function loadStock(){
+  const rows = document.getElementById("stockRows");
+  rows.innerHTML = '<tr><td colspan="6">Loading stock…</td></tr>';
+
+  try{
+    const variants = await api("product_variants?select=id,product_id,label,quantity,unit,price,stock,active&active=eq.true&order=created_at.desc");
+
+    if(!Array.isArray(variants)) throw new Error("Invalid stock response");
+
+    const productIds = variants.map(function(v){ return v.product_id; }).filter(Boolean);
+    const names = {};
+
+    for(const id of productIds){
+      try{
+        const result = await api("products?select=name&id=eq." + encodeURIComponent(id));
+        if(result && result[0]) names[id] = result[0].name;
+      }catch(e){}
+    }
+
+    let total = 0, low = 0, out = 0;
+
+    if(variants.length === 0){
+      rows.innerHTML = '<tr><td colspan="6">No active products found.</td></tr>';
+    }else{
+      rows.innerHTML = variants.map(function(v){
+        const stock = Math.max(0, Number(v.stock || 0));
+        total += stock;
+        if(stock === 0) out++;
+        else if(stock <= 5) low++;
+
+        const status = stock === 0 ? "OUT OF STOCK" : stock <= 5 ? "LOW STOCK" : "IN STOCK";
+        const cls = stock === 0 ? "out" : stock <= 5 ? "low" : "";
+
+        return '<tr>' +
+          '<td><b>' + esc(names[v.product_id] || "Product") + '</b></td>' +
+          '<td>' + esc(v.label || ((v.quantity || "") + " " + (v.unit || ""))) + '</td>' +
+          '<td>₹' + Number(v.price || 0).toFixed(0) + '</td>' +
+          '<td class="' + cls + '"><b>' + stock + '</b> ' + esc(v.unit || "") + '</td>' +
+          '<td><span class="badge">' + status + '</span></td>' +
+          '<td><div class="stock-row-actions">' +
+            '<button class="save" onclick="adjustStock(\'' + v.id + '\',-1)">−</button>' +
+            '<button class="save" onclick="adjustStock(\'' + v.id + '\',1)">+</button>' +
+            '<button class="save warn" onclick="setStock(\'' + v.id + '\',' + stock + ')">Set</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join("");
+    }
+
+    document.getElementById("stockProducts").textContent = variants.length;
+    document.getElementById("stockUnits").textContent = total;
+    document.getElementById("stockLowCount").textContent = low;
+    document.getElementById("stockOutCount").textContent = out;
+    document.getElementById("dashboardLowStock").textContent = low + out;
+
+    setStatus("Connected to Gaon Mart database ✓", true);
+  }catch(error){
+    rows.innerHTML =
+      '<tr><td colspan="6">' +
+      '<b>Stock could not be loaded.</b><br>' +
+      '<span class="muted">' + esc(error.message) + '</span><br><br>' +
+      '<button class="save" onclick="loadStock()">Retry</button>' +
+      '</td></tr>';
+    setStatus("Database request failed — see Stock section for details", false);
+  }
+}
+
+async function adjustStock(id, change){
+  try{
+    const currentRows = await api("product_variants?select=stock&id=eq." + encodeURIComponent(id));
+    if(!currentRows || !currentRows[0]) throw new Error("Product variant not found");
+
+    const current = Number(currentRows[0].stock || 0);
+    const next = Math.max(0, current + change);
+
+    await api("product_variants?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({stock:next})
+    });
+
+    await loadStock();
+    await loadProducts();
+  }catch(error){
+    alert("Stock update failed:\n" + error.message);
+  }
+}
+
+async function setStock(id, current){
+  const value = prompt("Enter exact stock quantity:", String(current));
+  if(value === null) return;
+
+  const next = Number(value);
+  if(!Number.isFinite(next) || next < 0){
+    alert("Please enter a valid stock number.");
+    return;
+  }
+
+  try{
+    await api("product_variants?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({stock:next})
+    });
+    await loadStock();
+    await loadProducts();
+  }catch(error){
+    alert("Stock update failed:\n" + error.message);
+  }
+}
+
+async function loadCategories(){
+  try{
+    const categories = await api("categories?select=id,name,active&active=eq.true&order=name");
+    const select = document.getElementById("cat");
+    const list = document.getElementById("catList");
+
+    select.innerHTML = (categories || []).map(function(c){
+      return '<option value="' + c.id + '">' + esc(c.name) + '</option>';
+    }).join("");
+
+    list.innerHTML = (categories || []).map(function(c){
+      const editCall = esc("editCategoryName(" + JSON.stringify(c.id) + "," + JSON.stringify(c.name) + ")");
+      const deleteCall = esc("deleteCategory(" + JSON.stringify(c.id) + "," + JSON.stringify(c.name) + ")");
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #eee">' +
+        '<span>• ' + esc(c.name) + '</span>' +
+        '<div class="stock-row-actions">' +
+          '<button class="save" onclick="' + editCall + '">Edit</button>' +
+          '<button class="save danger" onclick="' + deleteCall + '">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }).join("") || "No categories found.";
+  }catch(error){
+    document.getElementById("catList").textContent = "Categories load failed: " + error.message;
+  }
+}
+
+async function addCategory(){
+  const input = document.getElementById("newCategoryName");
+  const name = input.value.trim();
+  if(!name){
+    alert("Category name enter karein.");
+    return;
+  }
+
+  try{
+    await api("categories", {
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({name:name, active:true})
+    });
+    input.value = "";
+    await loadCategories();
+  }catch(error){
+    alert("Category add failed:\n" + error.message);
+  }
+}
+
+async function editCategoryName(id, currentName){
+  const value = prompt("Category ka naya naam:", currentName);
+  if(value === null) return;
+  const name = value.trim();
+  if(!name) return;
+
+  try{
+    await api("categories?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({name:name})
+    });
+    await loadCategories();
+    await loadProducts();
+  }catch(error){
+    alert("Category update failed:\n" + error.message);
+  }
+}
+
+async function deleteCategory(id, name){
+  if(!confirm('"' + name + '" category delete karein? Isme jo products hain unki category "unassigned" jaisi dikhegi.')) return;
+
+  try{
+    await api("categories?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({active:false})
+    });
+    await loadCategories();
+  }catch(error){
+    alert("Category delete failed:\n" + error.message);
+  }
+}
+
+let allProductRows = [];
+
+async function loadProducts(){
+  try{
+    productVariants = await api("product_variants?select=id,product_id,label,quantity,unit,price,mrp,stock,is_paused,active&active=eq.true&order=created_at.desc");
+
+    const ids = productVariants.map(function(v){return v.product_id;}).filter(Boolean);
+    const names = {};
+    const cats = {};
+    const descriptions = {};
+    const images = {};
+
+    for(const id of ids){
+      try{
+        const result = await api("products?select=name,category_id,description,image_url&id=eq." + encodeURIComponent(id));
+        if(result && result[0]){
+          names[id] = result[0].name;
+          cats[id] = result[0].category_id;
+          descriptions[id] = result[0].description;
+          images[id] = result[0].image_url;
+        }
+      }catch(e){}
+    }
+
+    const categories = await api("categories?select=id,name");
+    const categoryNames = {};
+    (categories || []).forEach(function(c){ categoryNames[c.id] = c.name; });
+
+    allProductRows = (productVariants || []).map(function(v){
+      return {
+        variant: v,
+        productName: names[v.product_id] || "Product",
+        categoryId: cats[v.product_id] || "",
+        categoryName: categoryNames[cats[v.product_id]] || "",
+        description: descriptions[v.product_id] || "",
+        imageUrl: images[v.product_id] || ""
+      };
+    });
+
+    renderProductRows(allProductRows);
+  }catch(error){
+    document.getElementById("productRows").innerHTML =
+      '<tr><td colspan="8">Products load failed: ' + esc(error.message) + '</td></tr>';
+  }
+}
+
+function renderProductRows(rows){
+  document.getElementById("productRows").innerHTML = rows.map(function(r){
+    const v = r.variant;
+    const stock = Number(v.stock || 0);
+    const editArgs = [v.id, v.product_id, r.productName, r.categoryId, v.label || "", Number(v.price || 0), stock, r.description, r.imageUrl, v.mrp ?? ""]
+      .map(function(a){ return JSON.stringify(a); }).join(",");
+    const editCall = esc("editProduct(" + editArgs + ")");
+    const deleteCall = esc("deleteProduct(" + JSON.stringify(v.id) + "," + JSON.stringify(r.productName) + ")");
+    const toggleCall = esc("toggleProductPause(" + JSON.stringify(v.id) + "," + JSON.stringify(!v.is_paused) + ")");
+    const thumb = r.imageUrl
+      ? '<img src="' + esc(r.imageUrl) + '" style="width:44px;height:44px;object-fit:cover;border-radius:8px" alt="">'
+      : '<div style="width:44px;height:44px;border-radius:8px;background:#edf5ef;display:flex;align-items:center;justify-content:center;font-size:18px">🛒</div>';
+    const priceCell = v.mrp && Number(v.mrp) > Number(v.price)
+      ? '<span style="text-decoration:line-through;color:#999">₹' + Number(v.mrp).toFixed(0) + '</span> ₹' + Number(v.price || 0).toFixed(0)
+      : '₹' + Number(v.price || 0).toFixed(0);
+    const statusBadge = v.is_paused
+      ? '<span class="badge" style="background:#fde3e3;color:#a11">OFF</span>'
+      : '<span class="badge" style="background:#e3fde8;color:#176b3d">ON</span>';
+    return '<tr>' +
+      '<td>' + thumb + '</td>' +
+      '<td>' + esc(r.productName) + '</td>' +
+      '<td>' + esc(r.categoryName) + '</td>' +
+      '<td>' + esc(v.label || "") + '</td>' +
+      '<td>' + priceCell + '</td>' +
+      '<td class="' + (stock <= 0 ? "out" : stock <= 5 ? "low" : "") + '">' + stock + '</td>' +
+      '<td><button class="save" onclick="' + toggleCall + '" style="padding:4px 10px">' + statusBadge + '</button></td>' +
+      '<td><div class="stock-row-actions">' +
+        '<button class="save" onclick="' + editCall + '">Edit</button>' +
+        '<button class="save danger" onclick="' + deleteCall + '">Delete</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join("") || '<tr><td colspan="8">No products found.</td></tr>';
+}
+
+document.getElementById("productSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  if(!q){ renderProductRows(allProductRows); return; }
+  renderProductRows(allProductRows.filter(function(r){
+    return r.productName.toLowerCase().includes(q) || r.categoryName.toLowerCase().includes(q);
+  }));
+});
+
+async function toggleProductPause(variantId, newPausedValue){
+  try{
+    await api("product_variants?id=eq." + encodeURIComponent(variantId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({is_paused:newPausedValue})
+    });
+    await loadProducts();
+  }catch(error){
+    alert("Status change failed:\n" + error.message);
+  }
+}
+
+let editingVariantId = null;
+let editingProductId = null;
+let editingImageUrl = "";
+
+function editProduct(variantId, productId, productName, categoryId, label, price, stock, description, imageUrl, mrp){
+  document.getElementById("productMrp").value = mrp || "";
+  editingVariantId = variantId;
+  editingProductId = productId;
+  editingImageUrl = imageUrl || "";
+
+  document.getElementById("name").value = productName;
+  document.getElementById("cat").value = categoryId;
+  document.getElementById("variant").value = label;
+  document.getElementById("price").value = price;
+  document.getElementById("productStock").value = stock;
+  document.getElementById("productDescription").value = description || "";
+  document.getElementById("productPhoto").value = "";
+
+  const preview = document.getElementById("productPhotoPreview");
+  preview.innerHTML = editingImageUrl
+    ? '<img src="' + esc(editingImageUrl) + '" style="width:80px;height:80px;object-fit:cover;border-radius:8px">'
+    : "";
+
+  document.getElementById("saveProduct").textContent = "Update Product";
+  document.getElementById("cancelEditProduct").style.display = "inline-block";
+  document.getElementById("products").scrollIntoView({behavior:"smooth"});
+}
+
+function cancelEditProduct(){
+  editingVariantId = null;
+  editingProductId = null;
+  editingImageUrl = "";
+  document.getElementById("name").value = "";
+  document.getElementById("variant").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("productStock").value = "";
+  document.getElementById("productMrp").value = "";
+  document.getElementById("productDescription").value = "";
+  document.getElementById("productPhoto").value = "";
+  document.getElementById("productPhotoPreview").innerHTML = "";
+  document.getElementById("saveProduct").textContent = "Save Product";
+  document.getElementById("cancelEditProduct").style.display = "none";
+}
+
+async function deleteProduct(variantId, productName){
+  if(!confirm('"' + productName + '" ko delete karein? Yeh list se hat jayega.')) return;
+
+  try{
+    await api("product_variants?id=eq." + encodeURIComponent(variantId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({active:false})
+    });
+
+    if(editingVariantId === variantId) cancelEditProduct();
+
+    await loadProducts();
+    await loadStock();
+  }catch(error){
+    alert("Delete failed:\n" + error.message);
+  }
+}
+
+async function uploadProductPhoto(file){
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = "products/" + Date.now() + "-" + Math.random().toString(36).slice(2) + "." + ext;
+
+  const {error: uploadError} = await supabaseClient.storage
+    .from("product-images")
+    .upload(path, file, {upsert:false});
+
+  if(uploadError) throw uploadError;
+
+  const {data} = supabaseClient.storage.from("product-images").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function saveProduct(){
+  const name = document.getElementById("name").value.trim();
+  const category = document.getElementById("cat").value;
+  const variant = document.getElementById("variant").value.trim();
+  const price = Number(document.getElementById("price").value);
+  const stock = Number(document.getElementById("productStock").value || 0);
+  const mrpRaw = document.getElementById("productMrp").value;
+  const mrp = mrpRaw === "" ? null : Number(mrpRaw);
+  const description = document.getElementById("productDescription").value.trim();
+  const photoFile = document.getElementById("productPhoto").files[0];
+
+  if(!name || !category || !variant || !Number.isFinite(price) || price < 0 || !Number.isFinite(stock) || stock < 0){
+    alert("Product, category, variant, price and stock are required.");
+    return;
+  }
+  if(mrp !== null && (!Number.isFinite(mrp) || mrp < 0)){
+    alert("MRP valid number honi chahiye, ya khali chhod dein.");
+    return;
+  }
+
+  const saveBtn = document.getElementById("saveProduct");
+  const originalLabel = saveBtn.textContent;
+
+  try{
+    let imageUrl = editingImageUrl || "";
+    if(photoFile){
+      saveBtn.textContent = "Uploading photo…";
+      saveBtn.disabled = true;
+      imageUrl = await uploadProductPhoto(photoFile);
+    }
+
+    if(editingVariantId){
+      await api("products?id=eq." + encodeURIComponent(editingProductId), {
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({name:name, category_id:category, description:description || null, image_url:imageUrl || null})
+      });
+
+      await api("product_variants?id=eq." + encodeURIComponent(editingVariantId), {
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({label:variant, price:price, mrp:mrp, stock:stock})
+      });
+
+      cancelEditProduct();
+      await loadProducts();
+      await loadStock();
+      alert("Product updated ✓");
+      return;
+    }
+
+    const product = await api("products", {
+      method:"POST",
+      headers:{"Prefer":"return=representation"},
+      body:JSON.stringify({name:name, category_id:category, active:true, description:description || null, image_url:imageUrl || null})
+    });
+
+    const productId = product[0].id;
+
+    await api("product_variants", {
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({
+        product_id:productId,
+        label:variant,
+        quantity:1,
+        unit:"pcs",
+        price:price,
+        mrp:mrp,
+        stock:stock,
+        active:true
+      })
+    });
+
+    document.getElementById("name").value = "";
+    document.getElementById("variant").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("productStock").value = "";
+    document.getElementById("productDescription").value = "";
+    document.getElementById("productPhoto").value = "";
+    document.getElementById("productPhotoPreview").innerHTML = "";
+
+    await loadProducts();
+    await loadStock();
+    alert("Product saved ✓");
+  }catch(error){
+    alert("Save failed:\n" + error.message);
+  }finally{
+    saveBtn.disabled = false;
+    if(saveBtn.textContent === "Uploading photo…"){
+      saveBtn.textContent = editingVariantId ? "Update Product" : originalLabel;
+    }
+  }
+}
+
+function orderActionButtons(orderId, status){
+  const s = status || "pending";
+  let buttons = "";
+
+  function actionCall(newStatus){
+    return esc("updateOrderStatus(" + JSON.stringify(orderId) + "," + JSON.stringify(newStatus) + "," + JSON.stringify(s) + ")");
+  }
+
+  if(s === "pending" || s === "placed"){
+    buttons += '<button class="save" onclick="' + actionCall("accepted") + '">✓ Accept</button>';
+    buttons += '<button class="save danger" onclick="' + actionCall("cancelled") + '">Cancel</button>';
+  }else if(s === "accepted"){
+    buttons += '<button class="save" onclick="' + actionCall("out_for_delivery") + '">🚴 Out for Delivery</button>';
+    buttons += '<button class="save danger" onclick="' + actionCall("cancelled") + '">Cancel</button>';
+  }else if(s === "out_for_delivery"){
+    buttons += '<button class="save" onclick="' + actionCall("delivered") + '">📦 Mark Delivered</button>';
+  }
+
+  return buttons ? '<div class="stock-row-actions" style="margin-top:10px">' + buttons + '</div>' : "";
+}
+
+let allOrders = [];
+
+async function loadOrders(){
+  const box = document.getElementById("orderList");
+  box.innerHTML = '<div class="card">Loading orders…</div>';
+
+  try{
+    allOrders = await api("orders?select=*&order=created_at.desc&limit=100");
+
+    if(!allOrders || !allOrders.length){
+      box.innerHTML = '<div class="card">No orders yet.</div>';
+      return;
+    }
+
+    renderOrderList(allOrders);
+  }catch(error){
+    box.innerHTML = '<div class="card">Orders load failed: ' + esc(error.message) + '</div>';
+  }
+}
+
+function renderOrderList(orders){
+  const box = document.getElementById("orderList");
+  box.innerHTML = orders.map(function(o){
+    const editChargeCall = esc("editDeliveryCharge(" + JSON.stringify(o.id) + "," + JSON.stringify(Number(o.delivery_charge || 0)) + "," + JSON.stringify(Number(o.subtotal || 0)) + ")");
+    return '<div class="card">' +
+      '<b>Order #' + esc(String(o.id).slice(0,8)) + '</b>' +
+      '<p>Phone: ' + esc(o.phone || "—") + '<br>Address: ' + esc(o.delivery_address || "—") + '</p>' +
+      '<p>Distance: ' + esc(o.distance_km ?? "—") + ' km<br>' +
+      'Subtotal: ₹' + Number(o.subtotal || 0).toFixed(0) + ' + Delivery: ₹' + Number(o.delivery_charge || 0).toFixed(0) +
+      ' <button class="save" style="padding:2px 8px;font-size:12px" onclick="' + editChargeCall + '">✏️ Edit</button><br>' +
+      '<b>Total: ₹' + Number(o.total || 0).toFixed(0) + '</b></p>' +
+      '<p>Status: <span class="badge">' + esc((o.order_status || "pending").replace(/_/g," ").toUpperCase()) + '</span></p>' +
+      orderActionButtons(o.id, o.order_status) +
+    '</div>';
+  }).join("") || '<div class="card">Koi matching order nahi mili.</div>';
+}
+
+async function editDeliveryCharge(orderId, currentCharge, subtotal){
+  const value = prompt("Delivery charge (₹) — automatic calculate hua tha ₹" + currentCharge.toFixed(0) + ". Naya amount likhein:", currentCharge);
+  if(value === null) return;
+  const newCharge = Number(value);
+  if(!Number.isFinite(newCharge) || newCharge < 0){
+    alert("Valid number likhein.");
+    return;
+  }
+
+  try{
+    await api("orders?id=eq." + encodeURIComponent(orderId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({delivery_charge:newCharge, total:subtotal + newCharge})
+    });
+    await loadOrders();
+  }catch(error){
+    alert("Delivery charge update failed:\n" + error.message);
+  }
+}
+
+document.getElementById("orderSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  if(!q){ renderOrderList(allOrders); return; }
+  renderOrderList(allOrders.filter(function(o){
+    return String(o.id).toLowerCase().includes(q) ||
+      (o.phone || "").toLowerCase().includes(q) ||
+      (o.delivery_address || "").toLowerCase().includes(q);
+  }));
+});
+
+async function adjustStockForOrder(orderId, direction){
+  // direction: 1 to deduct stock (order accepted), -1 to restore stock (order cancelled after being accepted)
+  const items = await api("order_items?select=product_variant_id,quantity&order_id=eq." + encodeURIComponent(orderId));
+
+  for(const item of (items || [])){
+    if(!item.product_variant_id) continue;
+    try{
+      const rows = await api("product_variants?select=stock&id=eq." + encodeURIComponent(item.product_variant_id));
+      if(!rows || !rows[0]) continue;
+      const current = Number(rows[0].stock || 0);
+      const change = Number(item.quantity || 0) * direction;
+      const next = Math.max(0, current - change);
+      await api("product_variants?id=eq." + encodeURIComponent(item.product_variant_id), {
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({stock:next})
+      });
+    }catch(e){
+      console.error("Stock adjust failed for item", item, e);
+    }
+  }
+}
+
+async function updateOrderStatus(orderId, newStatus, currentStatus){
+  const labels = {
+    accepted:"Accept karna",
+    out_for_delivery:"Out for Delivery mark karna",
+    delivered:"Delivered mark karna",
+    cancelled:"Cancel karna"
+  };
+  if(!confirm((labels[newStatus] || "Status change karna") + " confirm karein?")) return;
+
+  try{
+    if(newStatus === "accepted" && (currentStatus === "pending" || currentStatus === "placed")){
+      await adjustStockForOrder(orderId, 1);
+    }
+    if(newStatus === "cancelled" && (currentStatus === "accepted" || currentStatus === "out_for_delivery")){
+      await adjustStockForOrder(orderId, -1);
+    }
+
+    await api("orders?id=eq." + encodeURIComponent(orderId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({order_status:newStatus})
+    });
+
+    await loadOrders();
+    await loadStock();
+    await loadDashboard();
+  }catch(error){
+    alert("Status update failed:\n" + error.message);
+  }
+}
+
+async function loadDashboard(){
+  try{
+    const orders = await api("orders?select=id,created_at,order_status,total&order=created_at.desc&limit=500");
+    const variants = await api("product_variants?select=stock&active=eq.true");
+
+    const today = new Date().toISOString().slice(0,10);
+    const todayOrders = (orders || []).filter(function(o){
+      return String(o.created_at || "").slice(0,10) === today;
+    });
+
+    document.getElementById("todayOrders").textContent = todayOrders.length;
+    document.getElementById("pendingOrders").textContent =
+      (orders || []).filter(function(o){ return ["pending","placed"].includes(o.order_status); }).length;
+
+    const sales = todayOrders
+      .filter(function(o){ return o.order_status !== "cancelled"; })
+      .reduce(function(sum,o){ return sum + Number(o.total || 0); },0);
+
+    document.getElementById("todaySales").textContent = "₹" + sales.toFixed(0);
+    document.getElementById("dashboardLowStock").textContent =
+      (variants || []).filter(function(v){ return Number(v.stock || 0) <= 5; }).length;
+  }catch(error){}
+}
+
+document.getElementById("loginBtn").addEventListener("click", adminLogin);
+document.getElementById("loginType").addEventListener("change", updateLoginTypeUI);
+document.getElementById("headerLoginBtn").addEventListener("click", function(){
+  document.getElementById("loginGate").style.display="flex";
+});
+supabaseClient.auth.onAuthStateChange(function(){
+  setTimeout(requireAdminSession, 0);
+});
+updateLoginTypeUI();
+document.getElementById("forgotBtn").addEventListener("click", forgotPassword);
+document.getElementById("logoutBtn").addEventListener("click", logoutAdmin);
+document.getElementById("dashboardLoginBtn").addEventListener("click", function(){
+  document.getElementById("loginGate").style.display="flex";
+});
+document.getElementById("dashboardLogoutBtn").addEventListener("click", logoutAdmin);
+document.getElementById("refreshStock").addEventListener("click", loadStock);
+document.getElementById("refreshOrders").addEventListener("click", loadOrders);
+document.getElementById("refreshDashboard").addEventListener("click", loadDashboard);
+document.getElementById("saveProduct").addEventListener("click", saveProduct);
+document.getElementById("cancelEditProduct").addEventListener("click", cancelEditProduct);
+document.getElementById("saveDelivery").addEventListener("click", saveDeliverySettings);
+document.getElementById("getMyLocation").addEventListener("click", useMyLocationForStore);
+document.getElementById("addCategoryBtn").addEventListener("click", addCategory);
+document.getElementById("productPhoto").addEventListener("change", function(){
+  const file = this.files[0];
+  const preview = document.getElementById("productPhotoPreview");
+  if(!file){ preview.innerHTML = ""; return; }
+  preview.innerHTML = '<img src="' + URL.createObjectURL(file) + '" style="width:80px;height:80px;object-fit:cover;border-radius:8px">';
+});
+document.getElementById("bannerPhoto").addEventListener("change", function(){
+  const file = this.files[0];
+  const preview = document.getElementById("bannerPhotoPreview");
+  if(!file){ preview.innerHTML = ""; return; }
+  preview.innerHTML = '<img src="' + URL.createObjectURL(file) + '" style="width:100%;max-width:260px;border-radius:8px">';
+});
+document.getElementById("saveBanner").addEventListener("click", saveBanner);
+document.getElementById("customerSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  if(!q){ renderCustomerList(allCustomers); return; }
+  renderCustomerList(allCustomers.filter(function(c){
+    return (c.name || "").toLowerCase().includes(q) || (c.phone || "").toLowerCase().includes(q);
+  }));
+});
+
+let allCustomers = [];
+
+async function loadCustomers(){
+  const box = document.getElementById("customerList");
+  box.innerHTML = "Loading…";
+
+  try{
+    const orders = await api("orders?select=phone,delivery_address,total,order_status,created_at&order=created_at.desc&limit=500");
+    const byPhone = {};
+
+    (orders || []).forEach(function(o){
+      const phone = o.phone || "Unknown";
+      if(!byPhone[phone]){
+        byPhone[phone] = {phone:phone, address:o.delivery_address || "", orderCount:0, totalSpent:0, lastOrder:o.created_at};
+      }
+      byPhone[phone].orderCount += 1;
+      if(o.order_status !== "cancelled") byPhone[phone].totalSpent += Number(o.total || 0);
+      if(!byPhone[phone].address && o.delivery_address) byPhone[phone].address = o.delivery_address;
+    });
+
+    allCustomers = Object.values(byPhone).sort(function(a,b){
+      return new Date(b.lastOrder) - new Date(a.lastOrder);
+    });
+
+    renderCustomerList(allCustomers);
+  }catch(error){
+    box.innerHTML = "Customers load failed: " + esc(error.message);
+  }
+}
+
+function renderCustomerList(list){
+  const box = document.getElementById("customerList");
+  box.innerHTML = list.map(function(c){
+    return '<div style="padding:10px 0;border-bottom:1px solid #eee">' +
+      '<b>' + esc(c.phone) + '</b><br>' +
+      '<span class="muted">' + esc(c.address || "Address not set") + '</span><br>' +
+      'Orders: ' + c.orderCount + ' · Total spent: ₹' + c.totalSpent.toFixed(0) +
+    '</div>';
+  }).join("") || "Koi customer nahi mila.";
+}
+
+async function loadBanners(){
+  const box = document.getElementById("bannerList");
+  box.innerHTML = "Loading…";
+
+  try{
+    const banners = await api("banners?select=*&order=sort_order,created_at.desc");
+
+    box.innerHTML = (banners || []).map(function(b){
+      const deleteCall = esc("deleteBanner(" + JSON.stringify(b.id) + ")");
+      return '<div style="margin-bottom:14px">' +
+        '<img src="' + esc(b.image_url) + '" style="width:100%;border-radius:10px;display:block">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">' +
+          '<span>' + esc(b.title || "(No title)") + '</span>' +
+          '<button class="save danger" onclick="' + deleteCall + '">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }).join("") || "Koi banner nahi hai.";
+  }catch(error){
+    box.innerHTML = "Banners load failed: " + esc(error.message);
+  }
+}
+
+async function saveBanner(){
+  const title = document.getElementById("bannerTitle").value.trim();
+  const photoFile = document.getElementById("bannerPhoto").files[0];
+  const btn = document.getElementById("saveBanner");
+
+  if(!photoFile){
+    alert("Banner ke liye photo select karein.");
+    return;
+  }
+
+  try{
+    btn.textContent = "Uploading…";
+    btn.disabled = true;
+
+    const ext = (photoFile.name.split(".").pop() || "jpg").toLowerCase();
+    const path = "banners/" + Date.now() + "-" + Math.random().toString(36).slice(2) + "." + ext;
+
+    const {error: uploadError} = await supabaseClient.storage
+      .from("banner-images")
+      .upload(path, photoFile, {upsert:false});
+    if(uploadError) throw uploadError;
+
+    const {data} = supabaseClient.storage.from("banner-images").getPublicUrl(path);
+
+    await api("banners", {
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({title:title || null, image_url:data.publicUrl, active:true})
+    });
+
+    document.getElementById("bannerTitle").value = "";
+    document.getElementById("bannerPhoto").value = "";
+    document.getElementById("bannerPhotoPreview").innerHTML = "";
+
+    await loadBanners();
+  }catch(error){
+    alert("Banner save failed:\n" + error.message);
+  }finally{
+    btn.textContent = "Add Banner";
+    btn.disabled = false;
+  }
+}
+
+async function deleteBanner(id){
+  if(!confirm("Yeh banner delete karein?")) return;
+
+  try{
+    await api("banners?id=eq." + encodeURIComponent(id), {method:"DELETE", headers:{"Prefer":"return=minimal"}});
+    await loadBanners();
+  }catch(error){
+    alert("Delete failed:\n" + error.message);
+  }
+}
+
+async function initialize(){
+  if(!(await requireAdminSession())) return;
+  // Dashboard is the default screen after login.
+  showTab("dash");
+  try{
+    await loadStock();
+    setStatus("Connected to Gaon Mart database ✓", true);
+    // Load the other panels in the background.
+    loadCategories().catch(console.error);
+    loadProducts().catch(console.error);
+    loadDashboard().catch(console.error);
+  }catch(error){
+    setStatus("Database request failed — tap Refresh Stock", false);
+    console.error(error);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", initialize);
+</script>
+</body>
+</html>
