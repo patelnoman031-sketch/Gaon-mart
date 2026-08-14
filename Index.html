@@ -1,0 +1,644 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="build" content="gaon-mart-admin-login-ui-v27-2026-08-13">
+<title>Gaon Mart — Admin</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f6f5;color:#17201b}
+header{background:#16834a;color:#fff;padding:18px;font-size:22px;font-weight:700}
+header small{float:right;font-size:13px;font-weight:400}
+nav{display:flex;gap:8px;overflow-x:auto;background:#fff;padding:10px;position:sticky;top:0;z-index:5}
+nav button{border:0;border-radius:10px;padding:12px 16px;background:#edf5ef;color:#176b3d;white-space:nowrap;font-size:15px}
+nav button.on{background:#16834a;color:#fff}
+main{max-width:1000px;margin:auto;padding:16px}
+.status{padding:12px;border-radius:10px;background:#fff8e1;margin-bottom:14px}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #0001}
+.grid,.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.statGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px #0001}
+.big{font-size:28px;font-weight:700;margin-top:5px}
+.muted{color:#69736d;font-size:12px}
+input,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:6px 0 12px;background:#fff}
+button.save{border:0;border-radius:8px;padding:10px 14px;background:#16834a;color:#fff;font-weight:700}
+button.warn{background:#fff4e5;color:#8a4b00}
+button.danger{background:#b42318;color:#fff}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;white-space:nowrap}
+.wrap{overflow:auto}
+[hidden]{display:none!important}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#e8f5e9;color:#176b3d;font-size:12px;font-weight:700}
+.low{color:#b54708;font-weight:700}
+.out{color:#b42318;font-weight:700}
+.notice{padding:12px;border-radius:8px;background:#f8faf8}
+.stock-row-actions{display:flex;gap:6px}
+.login-chip{font-size:12px;opacity:.95}.admin-logged{display:inline-block!important}\n@media(max-width:700px){
+ .grid,.row{grid-template-columns:1fr}
+ .statGrid{grid-template-columns:1fr 1fr}
+ th,td{padding:8px}
+}
+
+.menu-btn{position:absolute;left:14px;top:10px;border:0;background:transparent;color:white;font-size:26px;cursor:pointer;z-index:10001}.brand{display:inline-block}.side-drawer{position:fixed;top:0;left:0;bottom:0;width:min(340px,86vw);background:#fff;z-index:10000;transform:translateX(-105%);transition:transform .25s ease;box-shadow:8px 0 30px rgba(0,0,0,.18);overflow:auto}.side-drawer.open{transform:translateX(0)}.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.38);z-index:9999;display:none}.drawer-overlay.show{display:block}.drawer-head{padding:18px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd}.drawer-account{padding:16px;border-bottom:1px solid #ddd;background:#f7faf8}.account-title{font-weight:700}.account-id{margin:5px 0 12px;word-break:break-all}.drawer-actions{display:flex;gap:7px;flex-wrap:wrap}.drawer-nav{padding:10px}.drawer-nav button{display:block;width:100%;text-align:left;border:0;background:transparent;padding:13px 12px;border-radius:10px;font-size:16px;cursor:pointer}.drawer-nav button:hover{background:#eef7f1}.drawer-nav button.active{background:#e3f3e8;font-weight:700}
+@media(max-width:700px){.menu-btn{left:10px}.brand{font-size:18px}}
+</style>
+</head>
+<body>
+<div id="loginGate" style="display:flex;position:fixed;inset:0;z-index:9999;background:#f4f6f5;align-items:center;justify-content:center;padding:18px">
+  <div class="card" style="width:100%;max-width:440px">
+    <div style="text-align:center;margin-bottom:14px">
+      <div style="font-size:42px">🛒</div>
+      <h2 style="margin:4px 0">Gaon Mart Admin</h2>
+      <div class="muted">Secure Admin Access</div>
+    </div>
+    <label>Login with</label>
+    <select id="loginType">
+      <option value="email">📧 Email</option>
+      <option value="phone">📱 Mobile Number</option>
+    </select>
+    <label id="identityLabel">Admin Email</label>
+    <input id="loginIdentity" autocomplete="username" placeholder="admin@example.com">
+    <label>Password</label>
+    <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter password">
+    <button class="save" id="loginBtn" style="width:100%;padding:13px">🔐 Login to Admin</button>
+    <button class="save" id="forgotBtn" style="width:100%;margin-top:8px;background:#edf5ef!important;color:#176b3d!important">Forgot Password</button>
+    <div id="loginMsg" class="muted" style="margin-top:10px;text-align:center"></div>
+  </div>
+</div>
+
+<header id="topHeader"><button id="menuBtn" class="menu-btn" aria-label="Open menu">☰</button><span class="brand">🛒 Gaon Mart</span></header>
+
+<nav>
+<button class="on" data-tab="dash">Dashboard</button>
+<button data-tab="products">Products</button>
+<button data-tab="stock">📦 Stock</button>
+<button data-tab="orders">Orders</button>
+<button data-tab="categories">Categories</button>
+<button data-tab="delivery">Delivery</button>
+</nav>
+
+<div id="drawerOverlay" class="drawer-overlay"></div>
+<aside id="sideDrawer" class="side-drawer" aria-hidden="true">
+  <div class="drawer-head"><div><b>🛒 Gaon Mart</b><div class="muted">Admin Menu</div></div><button id="drawerClose" class="save">✕</button></div>
+  <div class="drawer-account">
+    <div class="account-title">👤 Logged-in Admin</div>
+    <div id="drawerAdminId" class="account-id">—</div>
+    <div class="drawer-actions"><button id="drawerLoginBtn" class="save">Login</button><button id="drawerSwitchBtn" class="save">Switch Account</button><button id="drawerLogoutBtn" class="save danger">Logout</button></div>
+  </div>
+  <nav id="drawerNav" class="drawer-nav">
+    <button data-tab="dash">📊 Dashboard</button><button data-tab="products">🛒 Products</button><button data-tab="stock">📦 Stock</button><button data-tab="orders">📋 Orders</button><button data-tab="cats">🏷️ Categories</button><button data-tab="delivery">🚚 Delivery</button>
+  </nav>
+</aside>
+<main id="adminContent" style="display:none">
+<div id="status" class="status">Connecting to database…</div>
+
+<section id="dash" hidden>
+<div class="card">
+  <b>🔐 Admin Account</b>
+  <div class="muted" style="margin-top:5px">Logged in account: <span id="dashboardAdminEmail">—</span></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button class="save" id="dashboardLoginBtn">Login / Switch Account</button>
+    <button class="save danger" id="dashboardLogoutBtn">Logout</button>
+  </div>
+</div>
+<h2>Dashboard</h2>
+<div class="statGrid">
+ <div class="stat"><div>Today's Orders</div><div class="big" id="todayOrders">0</div></div>
+ <div class="stat"><div>Pending</div><div class="big" id="pendingOrders">0</div></div>
+ <div class="stat"><div>Today's Sales</div><div class="big" id="todaySales">₹0</div></div>
+ <div class="stat"><div>Low Stock</div><div class="big" id="dashboardLowStock">0</div></div>
+</div>
+<div class="card">
+<b>Service area</b>
+<p>Mosali, Surat, Gujarat + nearby villages</p>
+<button class="save" id="refreshDashboard">↻ Refresh Dashboard</button>
+</div>
+</section>
+
+<section id="products" hidden>
+<h2>Products</h2>
+<div class="card">
+<div class="row">
+<div><label>Product name</label><input id="name" placeholder="Tomato"></div>
+<div><label>Category</label><select id="cat"></select></div>
+</div>
+<div class="row">
+<div><label>Variant / quantity</label><input id="variant" placeholder="1 kg"></div>
+<div><label>Price ₹</label><input id="price" type="number" min="0" placeholder="100"></div>
+</div>
+<label>Stock</label>
+<input id="productStock" type="number" min="0" placeholder="50">
+<button class="save" id="saveProduct">Save Product</button>
+</div>
+<div class="card wrap">
+<table>
+<thead><tr><th>Product</th><th>Category</th><th>Variant</th><th>Price</th><th>Stock</th></tr></thead>
+<tbody id="productRows"></tbody>
+</table>
+</div>
+</section>
+
+<section id="stock">
+<h2>📦 Stock Management</h2>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+<div>
+<b>Inventory</b>
+<div class="muted">Stock is deducted automatically when an order is accepted.</div>
+</div>
+<button class="save" id="refreshStock">↻ Refresh Stock</button>
+</div>
+</div>
+
+<div class="statGrid">
+ <div class="stat"><div class="muted">Products</div><div class="big" id="stockProducts">0</div></div>
+ <div class="stat"><div class="muted">Total Units</div><div class="big" id="stockUnits">0</div></div>
+ <div class="stat"><div class="muted">Low Stock</div><div class="big" id="stockLowCount">0</div></div>
+ <div class="stat"><div class="muted">Out of Stock</div><div class="big" id="stockOutCount">0</div></div>
+</div>
+
+<div class="card wrap">
+<table>
+<thead>
+<tr><th>Product</th><th>Variant</th><th>Price</th><th>Current Stock</th><th>Status</th><th>Adjust</th></tr>
+</thead>
+<tbody id="stockRows">
+<tr><td colspan="6">Stock will appear here.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="orders" hidden>
+<h2>Orders <button class="save" style="float:right" id="refreshOrders">↻ Refresh</button></h2>
+<div id="orderList"></div>
+</section>
+
+<section id="categories" hidden>
+<h2>Categories</h2>
+<div class="card" id="catList">Loading…</div>
+</section>
+
+<section id="delivery" hidden>
+<h2>Delivery Settings</h2>
+<div class="card">
+<label>Delivery charge per km ₹</label>
+<input id="deliveryRate" value="3.50" type="number" min="0" step="0.01">
+<button class="save" id="saveDelivery">Save Settings</button>
+</div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+
+const SUPABASE_URL = "https://dayhqgusooffpcvpdfxl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YfZ4zPMbCplUIdjTQv8Ciw_7mfLW47w";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function requireAdminSession(){
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  const gate=document.getElementById("loginGate"), content=document.getElementById("adminContent");
+  const drawerId=document.getElementById("drawerAdminId");
+  if(!session){gate.style.display="flex";content.style.display="none";if(drawerId)drawerId.textContent="Not logged in";return false;}
+  gate.style.display="none";content.style.display="block";
+  window.__SUPABASE_ACCESS_TOKEN=session.access_token;
+  const identity=session.user.email||session.user.phone||"Admin";
+  if(drawerId)drawerId.textContent=identity;
+  return true;
+}
+
+async function adminLogin(){
+  const type=document.getElementById("loginType").value;
+  let identity=document.getElementById("loginIdentity").value.trim();
+  if(type==="phone"){
+    identity=identity.replace(/\D/g,"");
+    if(identity.length===10) identity="+91"+identity;
+  }
+  const password=document.getElementById("loginPassword").value;
+  const msg=document.getElementById("loginMsg");
+
+  if(!identity || !password){
+    msg.textContent="Email/mobile and password required.";
+    return;
+  }
+
+  msg.textContent="Signing in…";
+  try{
+    const payload = type==="phone"
+      ? {phone: identity, password: password}
+      : {email: identity, password: password};
+
+    const {error}=await supabaseClient.auth.signInWithPassword(payload);
+    if(error) throw error;
+
+    const ok=await requireAdminSession();
+    if(!ok) throw new Error("Login session was not created.");
+    msg.textContent="";
+    await initialize();
+  }catch(e){
+    msg.textContent="Login failed: "+e.message;
+  }
+}
+
+async function forgotPassword(){
+  const type=document.getElementById("loginType").value;
+  const identity=document.getElementById("loginIdentity").value.trim();
+  const msg=document.getElementById("loginMsg");
+
+  if(type!=="email"){
+    msg.textContent="Password reset link email se hi bheja jayega. Pehle Email select karein.";
+    return;
+  }
+  if(!identity){
+    msg.textContent="Admin email enter karein.";
+    return;
+  }
+
+  try{
+    const {error}=await supabaseClient.auth.resetPasswordForEmail(identity,{
+      redirectTo: window.location.href
+    });
+    if(error) throw error;
+    msg.textContent="Password reset email sent.";
+  }catch(e){
+    msg.textContent="Reset failed: "+e.message;
+  }
+}
+
+async function logoutAdmin(){
+  await supabaseClient.auth.signOut();
+  window.location.reload();
+}
+
+
+let productVariants = [];
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, function(m){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];
+  });
+}
+
+async function api(path, options){
+  options = options || {};
+  const headers = Object.assign({
+    "apikey": SUPABASE_KEY,
+    "Authorization": "Bearer " + (window.__SUPABASE_ACCESS_TOKEN || SUPABASE_KEY),
+    "Content-Type": "application/json"
+  }, options.headers || {});
+  const response = await fetch(SUPABASE_URL + "/rest/v1/" + path, Object.assign({}, options, {headers}));
+  const text = await response.text();
+  if(!response.ok) throw new Error(text || ("HTTP " + response.status));
+  return text ? JSON.parse(text) : null;
+}
+
+function setStatus(message, ok){
+  const el = document.getElementById("status");
+  el.textContent = message;
+  el.style.background = ok ? "#e8f5e9" : "#fff8e1";
+}
+
+async function showTab(id){
+  document.querySelectorAll("main section").forEach(function(section){
+    section.hidden = section.id !== id;
+  });
+
+  const target = document.getElementById(id);
+  if(target) target.hidden = false;
+
+  document.querySelectorAll("nav button").forEach(function(button){
+    button.classList.toggle("on", button.dataset.tab === id);
+  });
+
+  if(id === "stock") loadStock();
+  if(id === "orders") loadOrders();
+  if(id === "products") loadProducts();
+  if(id === "categories") loadCategories();
+  if(id === "dash") loadDashboard();
+}
+
+document.querySelectorAll("nav button").forEach(function(button){
+  button.addEventListener("click", function(){ showTab(button.dataset.tab); });
+});
+
+async function loadStock(){
+  const rows = document.getElementById("stockRows");
+  rows.innerHTML = '<tr><td colspan="6">Loading stock…</td></tr>';
+
+  try{
+    const variants = await api("product_variants?select=id,product_id,label,quantity,unit,price,stock,active&active=eq.true&order=created_at.desc");
+
+    if(!Array.isArray(variants)) throw new Error("Invalid stock response");
+
+    const productIds = variants.map(function(v){ return v.product_id; }).filter(Boolean);
+    const names = {};
+
+    for(const id of productIds){
+      try{
+        const result = await api("products?select=name&id=eq." + encodeURIComponent(id));
+        if(result && result[0]) names[id] = result[0].name;
+      }catch(e){}
+    }
+
+    let total = 0, low = 0, out = 0;
+
+    if(variants.length === 0){
+      rows.innerHTML = '<tr><td colspan="6">No active products found.</td></tr>';
+    }else{
+      rows.innerHTML = variants.map(function(v){
+        const stock = Math.max(0, Number(v.stock || 0));
+        total += stock;
+        if(stock === 0) out++;
+        else if(stock <= 5) low++;
+
+        const status = stock === 0 ? "OUT OF STOCK" : stock <= 5 ? "LOW STOCK" : "IN STOCK";
+        const cls = stock === 0 ? "out" : stock <= 5 ? "low" : "";
+
+        return '<tr>' +
+          '<td><b>' + esc(names[v.product_id] || "Product") + '</b></td>' +
+          '<td>' + esc(v.label || ((v.quantity || "") + " " + (v.unit || ""))) + '</td>' +
+          '<td>₹' + Number(v.price || 0).toFixed(0) + '</td>' +
+          '<td class="' + cls + '"><b>' + stock + '</b> ' + esc(v.unit || "") + '</td>' +
+          '<td><span class="badge">' + status + '</span></td>' +
+          '<td><div class="stock-row-actions">' +
+            '<button class="save" onclick="adjustStock(\'' + v.id + '\',-1)">−</button>' +
+            '<button class="save" onclick="adjustStock(\'' + v.id + '\',1)">+</button>' +
+            '<button class="save warn" onclick="setStock(\'' + v.id + '\',' + stock + ')">Set</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join("");
+    }
+
+    document.getElementById("stockProducts").textContent = variants.length;
+    document.getElementById("stockUnits").textContent = total;
+    document.getElementById("stockLowCount").textContent = low;
+    document.getElementById("stockOutCount").textContent = out;
+    document.getElementById("dashboardLowStock").textContent = low + out;
+
+    setStatus("Connected to Gaon Mart database ✓", true);
+  }catch(error){
+    rows.innerHTML =
+      '<tr><td colspan="6">' +
+      '<b>Stock could not be loaded.</b><br>' +
+      '<span class="muted">' + esc(error.message) + '</span><br><br>' +
+      '<button class="save" onclick="loadStock()">Retry</button>' +
+      '</td></tr>';
+    setStatus("Database request failed — see Stock section for details", false);
+  }
+}
+
+async function adjustStock(id, change){
+  try{
+    const currentRows = await api("product_variants?select=stock&id=eq." + encodeURIComponent(id));
+    if(!currentRows || !currentRows[0]) throw new Error("Product variant not found");
+
+    const current = Number(currentRows[0].stock || 0);
+    const next = Math.max(0, current + change);
+
+    await api("product_variants?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({stock:next})
+    });
+
+    await loadStock();
+    await loadProducts();
+  }catch(error){
+    alert("Stock update failed:\n" + error.message);
+  }
+}
+
+async function setStock(id, current){
+  const value = prompt("Enter exact stock quantity:", String(current));
+  if(value === null) return;
+
+  const next = Number(value);
+  if(!Number.isFinite(next) || next < 0){
+    alert("Please enter a valid stock number.");
+    return;
+  }
+
+  try{
+    await api("product_variants?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({stock:next})
+    });
+    await loadStock();
+    await loadProducts();
+  }catch(error){
+    alert("Stock update failed:\n" + error.message);
+  }
+}
+
+async function loadCategories(){
+  try{
+    const categories = await api("categories?select=id,name,active&active=eq.true&order=name");
+    const select = document.getElementById("cat");
+    const list = document.getElementById("catList");
+
+    select.innerHTML = (categories || []).map(function(c){
+      return '<option value="' + c.id + '">' + esc(c.name) + '</option>';
+    }).join("");
+
+    list.innerHTML = (categories || []).map(function(c){
+      return '<p>• ' + esc(c.name) + '</p>';
+    }).join("") || "No categories found.";
+  }catch(error){
+    document.getElementById("catList").textContent = "Categories load failed: " + error.message;
+  }
+}
+
+async function loadProducts(){
+  try{
+    productVariants = await api("product_variants?select=id,product_id,label,quantity,unit,price,stock,active&active=eq.true&order=created_at.desc");
+
+    const ids = productVariants.map(function(v){return v.product_id;}).filter(Boolean);
+    const names = {};
+    const cats = {};
+
+    for(const id of ids){
+      try{
+        const result = await api("products?select=name,category_id&id=eq." + encodeURIComponent(id));
+        if(result && result[0]){
+          names[id] = result[0].name;
+          cats[id] = result[0].category_id;
+        }
+      }catch(e){}
+    }
+
+    const categories = await api("categories?select=id,name");
+    const categoryNames = {};
+    (categories || []).forEach(function(c){ categoryNames[c.id] = c.name; });
+
+    document.getElementById("productRows").innerHTML = (productVariants || []).map(function(v){
+      const stock = Number(v.stock || 0);
+      return '<tr>' +
+        '<td>' + esc(names[v.product_id] || "Product") + '</td>' +
+        '<td>' + esc(categoryNames[cats[v.product_id]] || "") + '</td>' +
+        '<td>' + esc(v.label || "") + '</td>' +
+        '<td>₹' + Number(v.price || 0).toFixed(0) + '</td>' +
+        '<td class="' + (stock <= 0 ? "out" : stock <= 5 ? "low" : "") + '">' + stock + '</td>' +
+      '</tr>';
+    }).join("") || '<tr><td colspan="5">No products found.</td></tr>';
+  }catch(error){
+    document.getElementById("productRows").innerHTML =
+      '<tr><td colspan="5">Products load failed: ' + esc(error.message) + '</td></tr>';
+  }
+}
+
+async function saveProduct(){
+  const name = document.getElementById("name").value.trim();
+  const category = document.getElementById("cat").value;
+  const variant = document.getElementById("variant").value.trim();
+  const price = Number(document.getElementById("price").value);
+  const stock = Number(document.getElementById("productStock").value || 0);
+
+  if(!name || !category || !variant || !Number.isFinite(price) || price < 0 || !Number.isFinite(stock) || stock < 0){
+    alert("Product, category, variant, price and stock are required.");
+    return;
+  }
+
+  try{
+    const product = await api("products", {
+      method:"POST",
+      headers:{"Prefer":"return=representation"},
+      body:JSON.stringify({name:name, category_id:category, active:true})
+    });
+
+    const productId = product[0].id;
+
+    await api("product_variants", {
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({
+        product_id:productId,
+        label:variant,
+        quantity:1,
+        unit:"pcs",
+        price:price,
+        stock:stock,
+        active:true
+      })
+    });
+
+    document.getElementById("name").value = "";
+    document.getElementById("variant").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("productStock").value = "";
+
+    await loadProducts();
+    await loadStock();
+    alert("Product saved ✓");
+  }catch(error){
+    alert("Save failed:\n" + error.message);
+  }
+}
+
+async function loadOrders(){
+  const box = document.getElementById("orderList");
+  box.innerHTML = '<div class="card">Loading orders…</div>';
+
+  try{
+    const orders = await api("orders?select=*&order=created_at.desc&limit=100");
+
+    if(!orders || !orders.length){
+      box.innerHTML = '<div class="card">No orders yet.</div>';
+      return;
+    }
+
+    box.innerHTML = orders.map(function(o){
+      return '<div class="card">' +
+        '<b>Order #' + esc(String(o.id).slice(0,8)) + '</b>' +
+        '<p>Phone: ' + esc(o.phone || "—") + '<br>Address: ' + esc(o.delivery_address || "—") + '</p>' +
+        '<p>Distance: ' + esc(o.distance_km ?? "—") + ' km<br>Total: ₹' + Number(o.total || 0).toFixed(0) + '</p>' +
+        '<p>Status: <span class="badge">' + esc((o.order_status || "pending").replace(/_/g," ").toUpperCase()) + '</span></p>' +
+      '</div>';
+    }).join("");
+  }catch(error){
+    box.innerHTML = '<div class="card">Orders load failed: ' + esc(error.message) + '</div>';
+  }
+}
+
+async function loadDashboard(){
+  try{
+    const orders = await api("orders?select=id,created_at,order_status,total&order=created_at.desc&limit=500");
+    const variants = await api("product_variants?select=stock&active=eq.true");
+
+    const today = new Date().toISOString().slice(0,10);
+    const todayOrders = (orders || []).filter(function(o){
+      return String(o.created_at || "").slice(0,10) === today;
+    });
+
+    document.getElementById("todayOrders").textContent = todayOrders.length;
+    document.getElementById("pendingOrders").textContent =
+      (orders || []).filter(function(o){ return ["pending","placed"].includes(o.order_status); }).length;
+
+    const sales = todayOrders
+      .filter(function(o){ return o.order_status !== "cancelled"; })
+      .reduce(function(sum,o){ return sum + Number(o.total || 0); },0);
+
+    document.getElementById("todaySales").textContent = "₹" + sales.toFixed(0);
+    document.getElementById("dashboardLowStock").textContent =
+      (variants || []).filter(function(v){ return Number(v.stock || 0) <= 5; }).length;
+  }catch(error){}
+}
+
+document.getElementById("loginBtn").addEventListener("click", adminLogin);
+document.getElementById("loginType").addEventListener("change", updateLoginTypeUI);
+document.getElementById("headerLoginBtn").addEventListener("click", function(){
+  document.getElementById("loginGate").style.display="flex";
+});
+supabaseClient.auth.onAuthStateChange(function(){
+  setTimeout(requireAdminSession, 0);
+});
+updateLoginTypeUI();
+document.getElementById("forgotBtn").addEventListener("click", forgotPassword);
+document.getElementById("logoutBtn").addEventListener("click", logoutAdmin);
+document.getElementById("dashboardLoginBtn").addEventListener("click", function(){
+  document.getElementById("loginGate").style.display="flex";
+});
+document.getElementById("dashboardLogoutBtn").addEventListener("click", logoutAdmin);
+const sideDrawer=document.getElementById("sideDrawer"), drawerOverlay=document.getElementById("drawerOverlay");
+function openDrawer(){sideDrawer.classList.add("open");drawerOverlay.classList.add("show");sideDrawer.setAttribute("aria-hidden","false");}
+function closeDrawer(){sideDrawer.classList.remove("open");drawerOverlay.classList.remove("show");sideDrawer.setAttribute("aria-hidden","true");}
+document.getElementById("menuBtn").addEventListener("click",openDrawer);
+document.getElementById("drawerClose").addEventListener("click",closeDrawer);
+drawerOverlay.addEventListener("click",closeDrawer);
+document.getElementById("drawerLoginBtn").addEventListener("click",()=>{closeDrawer();document.getElementById("loginGate").style.display="flex";});
+document.getElementById("drawerSwitchBtn").addEventListener("click",async()=>{await supabaseClient.auth.signOut();closeDrawer();document.getElementById("loginGate").style.display="flex";});
+document.getElementById("drawerLogoutBtn").addEventListener("click",logoutAdmin);
+document.querySelectorAll("#drawerNav button[data-tab]").forEach(b=>b.addEventListener("click",()=>{showTab(b.dataset.tab);closeDrawer();}));
+let touchStartX=0;document.addEventListener("touchstart",e=>{touchStartX=e.changedTouches[0].screenX},{passive:true});document.addEventListener("touchend",e=>{const dx=e.changedTouches[0].screenX-touchStartX;if(dx>70)openDrawer();if(dx<-70)closeDrawer();},{passive:true});
+document.getElementById("refreshStock").addEventListener("click", loadStock);
+document.getElementById("refreshOrders").addEventListener("click", loadOrders);
+document.getElementById("refreshDashboard").addEventListener("click", loadDashboard);
+document.getElementById("saveProduct").addEventListener("click", saveProduct);
+document.getElementById("saveDelivery").addEventListener("click", function(){
+  alert("Delivery settings UI saved for this panel. The live delivery calculation remains in Shop.html.");
+});
+
+async function initialize(){
+  if(!(await requireAdminSession())) return;
+  // Dashboard is the default screen after login.
+  showTab("dash");
+  try{
+    await loadStock();
+    setStatus("Connected to Gaon Mart database ✓", true);
+    // Load the other panels in the background.
+    loadCategories().catch(console.error);
+    loadProducts().catch(console.error);
+    loadDashboard().catch(console.error);
+  }catch(error){
+    setStatus("Database request failed — tap Refresh Stock", false);
+    console.error(error);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", initialize);
+</script>
+</body>
+</html>
