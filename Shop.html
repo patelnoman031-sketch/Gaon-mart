@@ -1,0 +1,1020 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gaon Mart • Customer</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f7f6;color:#17201b;padding-bottom:78px}
+header{position:sticky;top:0;z-index:5;background:#16834a;color:#fff;padding:15px 16px}.logo{font-size:23px;font-weight:700}
+.location{margin-top:8px;background:#fff2;padding:9px;border-radius:8px;font-size:13px}
+main{max-width:700px;margin:auto;padding:14px}.search{width:100%;padding:13px;border:1px solid #ddd;border-radius:10px;font-size:15px}
+.cats{display:flex;gap:9px;overflow:auto;padding:12px 0}.cats button{white-space:nowrap;border:0;border-radius:20px;padding:9px 14px;background:#e9f4ed;color:#176b3d}.cats .sel{background:#16834a;color:#fff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.product,.card{background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px #0001}.emoji{font-size:42px;text-align:center;padding:10px}.name{font-weight:700}.muted{color:#69736d;font-size:13px}.price{font-weight:700;margin:7px 0}
+.qty{display:flex;align-items:center;gap:6px}.qty button{border:0;border-radius:8px;background:#e9f4ed;color:#16834a;padding:8px;font-size:17px}.add{flex:1!important;background:#16834a!important;color:white!important;font-size:14px!important}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #ddd;padding:10px;z-index:6}.cartbtn,.primary{width:100%;max-width:700px;display:block;margin:auto;background:#16834a;color:white;border:0;border-radius:10px;padding:14px;font-size:16px;font-weight:700}
+.screen{display:none}.screen.active{display:block}.back{border:0;background:none;font-size:19px;padding:0;margin-bottom:10px}.line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eee}
+.form input{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;margin:6px 0 12px}.pay{display:flex;gap:10px}.pay button{flex:1;padding:12px;border:1px solid #ccc;border-radius:9px;background:white}.pay .active{border:2px solid #16834a;background:#eef8f1}
+.empty{text-align:center;padding:45px 10px;color:#667}.trackSearch{display:grid;grid-template-columns:1fr 1fr;gap:8px}.smallBtn{padding:10px;border:0;border-radius:8px;background:#16834a;color:#fff;font-weight:700}.steps{display:flex;gap:5px;flex-wrap:wrap;margin:12px 0}.step{padding:6px 9px;border-radius:999px;background:#e9ecea;color:#68716c;font-size:12px}.step.active{background:#16834a;color:#fff}.locationBtn{width:100%;padding:12px;border:0;border-radius:9px;background:#16834a;color:white;font-weight:700}
+
+/* ===== GAON MART CUSTOMER SHOP v8 ===== */
+.gm-toprow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.gm-account-btn{border:0;background:#ffffff22;color:#fff;border-radius:9px;padding:8px 10px;font-weight:700}
+.gm-banner-wrap{margin:12px 0;overflow:hidden;border-radius:13px}.gm-banner-track{display:flex;gap:9px;overflow:auto;scroll-snap-type:x mandatory}
+.gm-banner{min-width:100%;height:145px;position:relative;border-radius:13px;overflow:hidden;background:#e9f4ed;scroll-snap-align:start}
+.gm-banner img{width:100%;height:100%;object-fit:cover}.gm-banner-caption{position:absolute;left:10px;bottom:10px;background:#0008;color:#fff;padding:7px 10px;border-radius:8px;font-weight:700}
+.gm-product-img{width:100%;height:125px;object-fit:contain;background:#fafafa;border-radius:9px;margin-bottom:5px}
+.gm-off{display:inline-block;background:#e8f6ed;color:#16834a;border-radius:5px;padding:3px 5px;font-size:11px;font-weight:800}
+.gm-mrp{text-decoration:line-through;color:#89918c;font-size:12px;margin-left:5px;font-weight:400}
+.gm-heart{position:absolute;right:8px;top:8px;width:31px;height:31px;border:0;border-radius:50%;background:#fff;box-shadow:0 1px 5px #0002;z-index:2}
+.gm-product{position:relative;cursor:pointer}.gm-product .qty{cursor:default}
+.gm-modal{position:fixed;inset:0;background:#0008;z-index:100;display:none;align-items:flex-end}.gm-modal.open{display:flex}
+.gm-modal-box{background:#fff;width:100%;max-width:700px;margin:auto;border-radius:17px 17px 0 0;padding:16px;max-height:90vh;overflow:auto}
+.gm-close{float:right;border:0;background:#eee;border-radius:50%;width:33px;height:33px;font-size:20px}
+.gm-detail-img{width:100%;height:230px;object-fit:contain;background:#fafafa;border-radius:10px}
+.gm-card{background:#fff;border-radius:12px;padding:13px;box-shadow:0 2px 8px #0001;margin:10px 0}
+.gm-actions{display:flex;gap:8px;overflow:auto;margin:9px 0}.gm-actions button{white-space:nowrap;border:1px solid #cfe0d5;background:#f5faf7;color:#16834a;border-radius:9px;padding:8px 10px;font-weight:700}
+.gm-primary{width:100%;background:#16834a;color:#fff;border:0;border-radius:9px;padding:12px;font-weight:800}
+.gm-line{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid #eee}
+.gm-empty{text-align:center;padding:30px 10px;color:#667}
+.gm-profile input{width:100%;padding:11px;border:1px solid #ccc;border-radius:8px;margin:5px 0 10px}
+.gm-toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#17201b;color:#fff;padding:10px 14px;border-radius:9px;z-index:200;display:none}
+@media(min-width:650px){.gm-banner{height:185px}}
+
+
+/* ===== V12 PROFESSIONAL CUSTOMER APP ===== */
+body{background:#f6f8f6;padding-bottom:86px}
+.gmv12-header{position:sticky;top:0;z-index:80;background:#fff;border-bottom:1px solid #e7ece8;box-shadow:0 2px 10px #0000000b}
+.gmv12-head{height:64px;display:flex;align-items:center;justify-content:center;position:relative;max-width:700px;margin:auto;padding:0 58px}
+.gmv12-menu,.gmv12-profile{position:absolute;top:13px;width:38px;height:38px;border:0;border-radius:11px;font-size:20px}
+.gmv12-menu{left:12px;background:#eef7f1;color:#16834a}.gmv12-profile{right:12px;background:#eef7f1;color:#16834a}
+.gmv12-brand{display:flex;align-items:center;gap:8px}.gmv12-logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(145deg,#16834a,#0b5e35);color:#fff;display:grid;place-items:center;font-weight:1000;font-size:17px;box-shadow:0 4px 10px #16834a33}.gmv12-brand strong{font-size:16px;color:#16834a;letter-spacing:.3px}.gmv12-brand small{display:block;color:#7a837e;font-size:9px;margin-top:1px}
+.gmv12-location{max-width:700px;margin:auto;padding:0 13px 9px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800}.gmv12-location small{display:block;color:#6f7873;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gmv12-search-wrap{max-width:700px;margin:auto;padding:0 12px 11px}.gmv12-search{height:46px;background:#f1f4f2;border:1px solid #e5eae7;border-radius:13px;display:flex;align-items:center;padding:0 13px;gap:8px}.gmv12-search input{border:0;outline:0;background:transparent;width:100%;font-size:14px}
+.gmv12-drawer{position:fixed;inset:0;z-index:300;visibility:hidden}.gmv12-drawer.open{visibility:visible}.gmv12-shade{position:absolute;inset:0;background:#0008;opacity:0;transition:.2s}.gmv12-drawer.open .gmv12-shade{opacity:1}.gmv12-panel{position:absolute;left:0;top:0;bottom:0;width:min(340px,88vw);background:#fff;transform:translateX(-105%);transition:.25s cubic-bezier(.2,.8,.2,1);padding:14px;overflow:auto;box-shadow:8px 0 28px #0003}.gmv12-drawer.open .gmv12-panel{transform:translateX(0)}
+.gmv12-menu-brand{text-align:center;padding:10px 0 14px;border-bottom:1px solid #edf0ee}.gmv12-menu-logo{margin:auto;width:68px;height:68px;border-radius:20px;background:linear-gradient(145deg,#16834a,#0b5e35);display:grid;place-items:center;color:#fff;font-size:25px;font-weight:1000;box-shadow:0 7px 18px #16834a33}.gmv12-account{background:linear-gradient(135deg,#16834a,#0e6338);color:#fff;border-radius:16px;padding:14px;margin:13px 0}.gmv12-avatar{width:42px;height:42px;border-radius:50%;background:#fff;color:#16834a;display:grid;place-items:center;font-weight:900;font-size:19px;margin-bottom:8px}.gmv12-item{display:flex;align-items:center;gap:13px;width:100%;border:0;background:#fff;padding:14px 9px;border-radius:11px;text-align:left;font-weight:800;font-size:14px;color:#202822}.gmv12-item:active{background:#edf7f1}.gmv12-item i{font-style:normal;font-size:20px;width:26px;text-align:center}.gmv12-sep{border:0;border-top:1px solid #eee;margin:8px}
+.gmv12-hero{margin:12px 0;border-radius:17px;overflow:hidden;background:linear-gradient(135deg,#16834a,#0e6338);color:#fff;padding:17px;min-height:112px;display:flex;align-items:center;justify-content:space-between}.gmv12-hero b{font-size:20px}.gmv12-hero small{opacity:.85;display:block;margin-top:4px}.gmv12-hero .hero-icon{font-size:52px}
+.gmv12-section{display:flex;justify-content:space-between;align-items:center;margin:17px 0 9px}.gmv12-section h3{margin:0;font-size:17px}.gmv12-section button{border:0;background:transparent;color:#16834a;font-weight:900}
+.gmv12-quick{display:flex;gap:9px;overflow:auto;padding-bottom:2px}.gmv12-quick button{min-width:92px;border:1px solid #e0e8e3;background:#fff;border-radius:12px;padding:11px 8px;font-weight:800;color:#27322c}.gmv12-quick button b{display:block;font-size:22px;margin-bottom:3px}
+.gmv12-tracking{padding:13px}.gmv12-track-hero{background:linear-gradient(135deg,#16834a,#0e6338);color:#fff;border-radius:18px;padding:19px;margin-bottom:12px}.gmv12-track-card{background:#fff;border-radius:15px;padding:15px;box-shadow:0 2px 10px #0001;margin:10px 0}.gmv12-step{display:flex;gap:12px;position:relative;padding-bottom:20px}.gmv12-step:last-child{padding-bottom:0}.gmv12-dot{width:30px;height:30px;border-radius:50%;background:#e0e7e2;display:grid;place-items:center;z-index:2;flex:none;font-size:13px}.gmv12-step.done .gmv12-dot,.gmv12-step.current .gmv12-dot{background:#16834a;color:#fff}.gmv12-line{position:absolute;left:14px;top:30px;bottom:0;width:2px;background:#dfe6e1}.gmv12-step.done .gmv12-line{background:#16834a}
+.gmv12-cartbar{position:fixed;left:10px;right:10px;bottom:10px;z-index:90;background:#16834a;color:#fff;border-radius:14px;padding:10px 12px;box-shadow:0 7px 22px #0003;display:none}.gmv12-cartbar div{display:flex;align-items:center;justify-content:space-between}.gmv12-cartbar button{border:0;background:#fff;color:#16834a;border-radius:9px;padding:9px 12px;font-weight:900}
+.gmv12-error{display:none;background:#fff0f0;border:1px solid #ffcaca;color:#a61b1b;border-radius:10px;padding:11px;margin:10px 0;font-size:12px;font-weight:700;white-space:pre-wrap}
+.gmv12-success{background:#eef9f1;border:1px solid #ccebd5;color:#166534;border-radius:13px;padding:14px;margin:10px 0}
+.gmv12-loading{padding:25px;text-align:center;color:#68716c}
+@media(min-width:650px){.gmv12-panel{width:360px}}
+.bottom{display:none!important}.gmv12-search-wrap{position:relative}.gmv12-location{cursor:pointer}
+/* ===== V13 PROFESSIONAL PRODUCT DETAIL ===== */
+.gmv13-detail{padding:10px 12px 90px;background:#f7f8f7;min-height:100vh}
+.gmv13-topbar{display:flex;align-items:center;gap:10px;padding:5px 0 12px}
+.gmv13-back,.gmv13-iconbtn{border:0;background:#fff;border-radius:11px;width:40px;height:40px;font-size:20px;box-shadow:0 1px 5px #0001}
+.gmv13-title{font-weight:900;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gmv13-gallery{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 10px #0001}
+.gmv13-mainimg{height:310px;display:grid;place-items:center;background:#fff;position:relative}
+.gmv13-mainimg img{width:100%;height:100%;object-fit:contain}
+.gmv13-count{position:absolute;right:12px;bottom:12px;background:#17201bcc;color:#fff;padding:6px 9px;border-radius:20px;font-size:11px;font-weight:800}
+.gmv13-thumbs{display:flex;gap:8px;overflow:auto;padding:10px;border-top:1px solid #eee}
+.gmv13-thumb{width:62px;height:62px;flex:none;border:2px solid transparent;border-radius:10px;background:#fafafa;overflow:hidden}
+.gmv13-thumb.active{border-color:#16834a}
+.gmv13-thumb img{width:100%;height:100%;object-fit:contain}
+.gmv13-info,.gmv13-section{background:#fff;border-radius:16px;padding:14px;margin-top:10px;box-shadow:0 2px 10px #0001}
+.gmv13-name{font-size:20px;font-weight:900;line-height:1.25;margin:0 0 5px}
+.gmv13-company{font-size:12px;color:#69736d}
+.gmv13-price{font-size:22px;font-weight:900;margin-top:12px}.gmv13-mrp{text-decoration:line-through;color:#8b938e;font-size:13px;margin-left:7px;font-weight:500}
+.gmv13-save{color:#16834a;font-size:12px;font-weight:800;margin-top:4px}
+.gmv13-variant{display:inline-block;background:#eef7f1;color:#16834a;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:800;margin-top:9px}
+.gmv13-section h3{margin:0 0 10px;font-size:16px}
+.gmv13-desc{font-size:13px;color:#4d5750;line-height:1.55}
+.gmv13-compare{display:flex;gap:10px;overflow:auto;padding-bottom:4px}
+.gmv13-simcard{width:150px;flex:none;border:1px solid #e7ebe8;border-radius:13px;padding:9px;background:#fff;position:relative}
+.gmv13-simcard img{width:100%;height:110px;object-fit:contain;border-radius:8px;background:#fafafa}
+.gmv13-simcard b{font-size:12px;display:block;margin-top:7px;line-height:1.25}
+.gmv13-simcard small{color:#69736d;display:block;margin-top:3px}
+.gmv13-simcard .gmv13-mini-price{font-weight:900;margin-top:5px}
+.gmv13-simcard button{width:100%;margin-top:7px;border:1px solid #16834a;background:#fff;color:#16834a;border-radius:8px;padding:7px;font-weight:900}
+.gmv13-label{position:absolute;top:7px;left:7px;background:#fff;color:#16834a;border-radius:6px;padding:4px 5px;font-size:9px;font-weight:900;box-shadow:0 1px 4px #0002}
+.gmv13-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.gmv13-product{background:#fff;border:1px solid #e9ecea;border-radius:13px;padding:9px;position:relative}
+.gmv13-product img{width:100%;height:135px;object-fit:contain;background:#fafafa;border-radius:9px}
+.gmv13-product h4{font-size:13px;line-height:1.25;margin:7px 0 3px}
+.gmv13-product small{color:#69736d}.gmv13-product .pprice{font-weight:900;margin-top:5px}
+.gmv13-product button{width:100%;border:1px solid #16834a;color:#16834a;background:#fff;border-radius:8px;padding:8px;margin-top:7px;font-weight:900}
+.gmv13-sticky{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #ddd;padding:9px 12px calc(9px + env(safe-area-inset-bottom));z-index:100;display:flex;gap:9px}
+.gmv13-sticky .qty{display:flex;align-items:center;border:1px solid #d9dedb;border-radius:9px;overflow:hidden}
+.gmv13-sticky .qty button{width:35px;height:40px;border:0;background:#fff;font-size:18px}
+.gmv13-sticky .qty span{min-width:28px;text-align:center;font-weight:900}
+.gmv13-add{flex:1;border:0;background:#16834a;color:#fff;border-radius:9px;font-weight:900;font-size:14px}
+@media(min-width:700px){.gmv13-detail{max-width:900px;margin:auto}.gmv13-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.gmv13-mainimg{height:390px}}
+
+/* ===== V14 FULL PRODUCT PAGE ===== */
+.gmv14-detail{background:#f6f8f6!important;padding-bottom:105px!important}
+.gmv14-hero{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 12px #0001}
+.gmv14-photo{height:360px;display:grid;place-items:center;position:relative;background:#fff}
+.gmv14-photo img{width:100%;height:100%;object-fit:contain}
+.gmv14-photo .zoom{position:absolute;right:12px;top:12px;background:#17201bcc;color:#fff;border:0;border-radius:20px;padding:7px 10px;font-size:11px;font-weight:800}
+.gmv14-badges{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.gmv14-badge{background:#16834a;color:#fff;border-radius:7px;padding:5px 8px;font-size:10px;font-weight:900}
+.gmv14-info{background:#fff;padding:16px}
+.gmv14-name{font-size:22px;font-weight:900;line-height:1.2}
+.gmv14-sub{font-size:12px;color:#69736d;margin-top:5px}
+.gmv14-price{font-size:25px;font-weight:900;margin-top:12px}
+.gmv14-mrp{text-decoration:line-through;color:#8b938e;font-size:14px;font-weight:500;margin-left:7px}
+.gmv14-save{color:#16834a;font-weight:800;font-size:12px;margin-top:3px}
+.gmv14-section{background:#fff;border-radius:16px;padding:15px;margin-top:11px;box-shadow:0 2px 10px #0001}
+.gmv14-section h3{font-size:17px;margin:0 0 11px}
+.gmv14-desc{font-size:14px;color:#414b44;line-height:1.65;white-space:pre-wrap}
+.gmv14-specs{border-top:1px solid #edf0ee}
+.gmv14-row{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid #edf0ee;font-size:13px}
+.gmv14-row span:first-child{color:#69736d}.gmv14-row span:last-child{text-align:right;font-weight:700;max-width:62%;word-break:break-word}
+.gmv14-thumbbar{display:flex;gap:8px;overflow:auto;padding:10px;border-top:1px solid #eee}
+.gmv14-thumb{width:64px;height:64px;flex:none;border:2px solid transparent;border-radius:10px;background:#fafafa;padding:0;overflow:hidden}
+.gmv14-thumb.active{border-color:#16834a}.gmv14-thumb img{width:100%;height:100%;object-fit:contain}
+.gmv14-simtitle{display:flex;justify-content:space-between;align-items:center}
+.gmv14-simtitle small{color:#16834a;font-weight:800}
+.gmv14-bottom{position:fixed;bottom:0;left:0;right:0;z-index:150;background:#fff;border-top:1px solid #ddd;padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;gap:9px}
+.gmv14-bottom .v14qty{display:flex;align-items:center;border:1px solid #d7ded9;border-radius:10px;overflow:hidden}
+.gmv14-bottom .v14qty button{border:0;background:#fff;width:37px;height:43px;font-size:20px}
+.gmv14-bottom .v14qty b{min-width:28px;text-align:center}
+.gmv14-cart{flex:1;border:0;border-radius:10px;background:#16834a;color:#fff;font-size:14px;font-weight:900}
+@media(min-width:700px){.gmv14-detail{max-width:920px!important;margin:auto}.gmv14-photo{height:450px}}
+
+
+/* ===== V15 PRODUCT FULLSCREEN + SCROLL-AWAY SEARCH ===== */
+.gmv15-detail{
+  padding:0 12px 108px!important;
+  background:#f6f8f6!important;
+  min-height:100vh;
+}
+.gmv15-top{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 0 9px;
+  background:#f6f8f6;
+  z-index:5;
+}
+.gmv15-back,.gmv15-share{
+  flex:none;border:0;background:#fff;border-radius:11px;width:40px;height:40px;
+  box-shadow:0 1px 6px #0001;font-size:20px;
+}
+.gmv15-title{
+  flex:1;font-size:15px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.gmv15-searchwrap{
+  padding:0 0 10px;background:#f6f8f6;
+}
+.gmv15-search{
+  display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e4e9e5;
+  border-radius:13px;height:43px;padding:0 12px;box-shadow:0 2px 8px #0001;
+}
+.gmv15-search span{font-size:17px}.gmv15-search input{
+  width:100%;border:0;outline:0;background:transparent;font-size:13px;
+}
+.gmv15-fullhero{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 2px 12px #0001}
+.gmv15-photo{
+  height:min(58vh,440px);min-height:290px;display:grid;place-items:center;
+  position:relative;background:#fff;
+}
+.gmv15-photo img{width:100%;height:100%;object-fit:contain}
+.gmv15-badges{position:absolute;left:12px;top:12px;display:flex;gap:6px;flex-wrap:wrap}
+.gmv15-badge{background:#16834a;color:#fff;border-radius:7px;padding:5px 8px;font-size:10px;font-weight:900}
+.gmv15-counter{position:absolute;right:12px;bottom:12px;background:#17201bcc;color:#fff;border:0;border-radius:20px;padding:7px 10px;font-size:11px;font-weight:900}
+.gmv15-nav{
+  position:absolute;top:50%;transform:translateY(-50%);width:35px;height:35px;border:0;
+  border-radius:50%;background:#fff;box-shadow:0 2px 8px #0003;font-size:22px;z-index:2;
+}
+.gmv15-prev{left:10px}.gmv15-next{right:10px}
+.gmv15-thumbs{display:flex;gap:8px;overflow:auto;padding:10px;border-top:1px solid #eee}
+.gmv15-thumb{
+  width:65px;height:65px;flex:none;border:2px solid transparent;border-radius:10px;
+  background:#fafafa;padding:0;overflow:hidden;
+}
+.gmv15-thumb.active{border-color:#16834a}.gmv15-thumb img{width:100%;height:100%;object-fit:contain}
+.gmv15-info{background:#fff;padding:16px}
+.gmv15-name{font-size:22px;font-weight:900;line-height:1.2}
+.gmv15-sub{font-size:12px;color:#69736d;margin-top:5px}
+.gmv15-price{font-size:25px;font-weight:900;margin-top:12px}
+.gmv15-mrp{text-decoration:line-through;color:#8b938e;font-size:14px;font-weight:500;margin-left:7px}
+.gmv15-save{color:#16834a;font-size:12px;font-weight:800;margin-top:3px}
+.gmv15-section{background:#fff;border-radius:16px;padding:15px;margin-top:11px;box-shadow:0 2px 10px #0001}
+.gmv15-section h3{font-size:17px;margin:0 0 11px}
+.gmv15-desc{font-size:14px;color:#414b44;line-height:1.65;white-space:pre-wrap}
+.gmv15-specs{border-top:1px solid #edf0ee}
+.gmv15-row{display:flex;justify-content:space-between;gap:15px;padding:11px 0;border-bottom:1px solid #edf0ee;font-size:13px}
+.gmv15-row span:first-child{color:#69736d}.gmv15-row span:last-child{text-align:right;font-weight:700;max-width:62%;word-break:break-word}
+.gmv15-bottom{
+  position:fixed;bottom:0;left:0;right:0;z-index:150;background:#fff;border-top:1px solid #ddd;
+  padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;gap:9px;
+}
+.gmv15-qty{display:flex;align-items:center;border:1px solid #d7ded9;border-radius:10px;overflow:hidden}
+.gmv15-qty button{border:0;background:#fff;width:37px;height:43px;font-size:20px}
+.gmv15-qty b{min-width:28px;text-align:center}
+.gmv15-cart{flex:1;border:0;border-radius:10px;background:#16834a;color:#fff;font-size:14px;font-weight:900}
+@media(min-width:700px){
+  .gmv15-detail{max-width:920px!important;margin:auto}
+  .gmv15-photo{height:480px}
+}
+</style>
+</head>
+<body>
+
+<header class="gmv12-header">
+ <div class="gmv12-head">
+  <button class="gmv12-menu" aria-label="Menu" onclick="gmv12Menu(true)">☰</button>
+  <div class="gmv12-brand"><div class="gmv12-logo">GM</div><div><strong>GAON MART</strong><small>Fresh • Fast • Local</small></div></div>
+  <button class="gmv12-profile" aria-label="Profile" onclick="gmv12Profile()">👤</button>
+ </div>
+ <div class="gmv12-location">📍 <span><b id="gmv12LocTitle">Deliver to your location</b><small id="locationBox">Tap below to use your current location</small></span></div>
+ <div class="gmv12-search-wrap"><div class="gmv12-search">🔎 <input id="search" placeholder="Search groceries, fruits, snacks..." oninput="render()"></div></div>
+</header>
+<div id="gmv12Drawer" class="gmv12-drawer">
+ <div class="gmv12-shade" onclick="gmv12Menu(false)"></div>
+ <aside class="gmv12-panel">
+  <div class="gmv12-menu-brand"><div class="gmv12-menu-logo">GM</div><b style="display:block;margin-top:7px;color:#16834a">GAON MART</b><small class="muted">Your local grocery store</small></div>
+  <div class="gmv12-account"><div class="gmv12-avatar">👤</div><b id="gmv12UserName">Guest Customer</b><div id="gmv12UserPhone" style="font-size:12px;opacity:.85;margin-top:3px">Login / save profile</div></div>
+  <button class="gmv12-item" onclick="gmv12Go('home')"><i>🏠</i>Home</button>
+  <button class="gmv12-item" onclick="gmv12Categories()"><i>🛍️</i>All Categories</button>
+  <button class="gmv12-item" onclick="gmv12Go('gmOrders');gmLoadOrders()"><i>📦</i>My Orders</button>
+  <button class="gmv12-item" onclick="gmv12Track()"><i>🚚</i>Track Order</button>
+  <button class="gmv12-item" onclick="gmv12Go('gmAccount');gmLoadProfile()"><i>👤</i>My Profile</button>
+  <button class="gmv12-item" onclick="gmv12Go('cartScreen');openCart()"><i>🛒</i>My Cart</button>
+  <button class="gmv12-item" onclick="gmShowAddresses()"><i>📍</i>Saved Addresses</button>
+  <button class="gmv12-item" onclick="gmv12Wishlist()"><i>❤️</i>Wishlist</button>
+  <hr class="gmv12-sep">
+  <button class="gmv12-item" onclick="gmv12Help()"><i>❓</i>Help & Support</button>
+ </aside>
+</div>
+
+<main>
+<section id="home" class="screen active">
+ <div class="gmv12-hero"><div><small>WELCOME TO GAON MART</small><b>Fresh groceries,<br>delivered to your door</b><small>Shop local • Save more • Get it fast</small></div><div class="hero-icon">🛒</div></div>
+ <div class="gm-banner-wrap"><div class="gm-banner-track" id="gmBanners"></div></div>
+ <div class="gmv12-section"><h3>Shop by category</h3><button onclick="gmv12Categories()">See all</button></div>
+ <div class="cats" id="cats"></div>
+ <div class="gmv12-section"><h3>⚡ Quick shopping</h3></div>
+ <div class="gmv12-quick"><button onclick="renderDeals()"><b>🔥</b>Best Deals</button><button onclick="renderPopular()"><b>⭐</b>Popular</button><button onclick="renderFresh()"><b>🥬</b>Fresh Picks</button><button onclick="gmv12Wishlist()"><b>❤️</b>Wishlist</button></div>
+ <div class="gmv12-section"><h3>All products</h3></div>
+ <div class="grid" id="products"></div>
+</section>
+<section id="cartScreen" class="screen"><button class="back" onclick="show('home')">← Continue Shopping</button><h2>Your Cart</h2><div id="cartList"></div></section>
+<section id="checkout" class="screen">
+<button class="back" onclick="show('cartScreen')">← Back to Cart</button><h2>Checkout</h2>
+<div class="card form">
+<label>Customer name *</label>
+<input id="customerName" placeholder="Your full name">
+<label>Mobile number *</label>
+<input id="phone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
+<label>Full delivery address *</label>
+<input id="address" placeholder="House / shop, street">
+<label>Village / Area *</label>
+<input id="village" placeholder="Village / area name">
+<label>Landmark <span class="muted">(optional)</span></label>
+<input id="landmark" placeholder="Near school, masjid, shop...">
+<label>Delivery note <span class="muted">(optional)</span></label>
+<input id="deliveryNote" placeholder="Any instruction for delivery">
+<label>Location <span class="muted">(optional)</span></label>
+<button type="button" class="locationBtn" onclick="getLocation()">📍 Use my current location</button>
+<div id="locationStatus" class="muted" style="margin:9px 0 12px">GPS optional hai. Address manually bhar kar bhi order kar sakte hain.</div>
+</div>
+<div class="card"><b>Payment</b><div class="pay"><button id="cod" class="active" onclick="payment('COD')">💵 Cash on Delivery</button><button id="upi" onclick="payment('UPI')">📲 UPI</button></div></div>
+<div class="card" id="summary"></div><div id="gmv12OrderError" class="gmv12-error"></div><button class="primary" onclick="placeOrder()">Place Order Securely</button>
+</section>
+
+<section id="tracking" class="screen gmv12-tracking">
+<button class="back" onclick="show('home')">← Back to Shop</button>
+<h2>Track Your Order</h2>
+<div class="card form">
+  <button class="smallBtn" style="width:100%;margin-bottom:10px" onclick="loadTracking(false)">📦 Load My Recent Order</button>
+  <label>Order ID</label>
+  <input id="trackOrderId" placeholder="Enter your order ID">
+  <label>Mobile number</label>
+  <input id="trackPhone" type="tel" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number">
+  <div class="trackSearch">
+    <button class="smallBtn" onclick="loadTracking(true)">🔎 Track Order</button>
+    <button class="smallBtn" onclick="loadTracking(false)">↻ Refresh</button>
+  </div>
+</div>
+<div class="card">
+  <div id="trackBox">Enter your Order ID and mobile number to track your order.</div>
+</div>
+</section>
+
+<section id="gmAccount" class="screen">
+<button class="back" onclick="show('home')">← Back to Shop</button>
+<div class="gm-card"><h2>My Account</h2><div class="gm-profile">
+<label>Name</label><input id="gmName" placeholder="Your full name">
+<label>Mobile</label><input id="gmPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile">
+<button class="gm-primary" onclick="gmSaveProfile()">Save Profile</button></div></div>
+<div class="gm-card"><button class="gm-primary" onclick="gmShow('gmOrders');gmLoadOrders()">📦 My Orders</button><br><button class="gm-primary" onclick="gmShowAddresses()">📍 Saved Addresses</button></div>
+<div id="gmAddresses"></div>
+</section>
+<section id="gmOrders" class="screen">
+<button class="back" onclick="show('home')">← Back to Shop</button>
+<div class="gm-card"><h2>My Orders</h2><input id="gmOrderPhone" type="tel" maxlength="10" inputmode="numeric" placeholder="10 digit mobile number" style="width:100%;padding:11px;border:1px solid #ccc;border-radius:8px"><button class="gm-primary" style="margin-top:8px" onclick="gmLoadOrders()">Load Orders</button></div>
+<div id="gmOrderList"></div>
+</section>
+<div class="gm-modal" id="gmProductModal" onclick="if(event.target===this)gmCloseProduct()"><div class="gm-modal-box" id="gmProductBox"></div></div>
+<div id="gmToast" class="gm-toast"></div>
+</main>
+<div id="gmv12CartBar" class="gmv12-cartbar"><div><span id="gmv12CartText">0 items</span><button onclick="openCart()">View Cart →</button></div></div>
+<div class="bottom"><button class="cartbtn" onclick="openCart()">🛒 Cart (<span id="count">0</span>) · ₹<span id="total">0</span></button></div>
+<script>
+const URL="https://dayhqgusooffpcvpdfxl.supabase.co",KEY="sb_publishable_YfZ4zPMbCplUIdjTQv8Ciw_7mfLW47w";
+let variants=[],cart={},selectedCat="all",payMethod="COD",rate=3.5,customerLat=null,customerLng=null,distanceKm=0;
+
+async function api(path,opt={}){const h={apikey:KEY,Authorization:"Bearer "+KEY,"Content-Type":"application/json",...(opt.headers||{})};const r=await fetch(URL+"/rest/v1/"+path,{...opt,headers:h});if(!r.ok)throw Error(await r.text());const t=await r.text();return t?JSON.parse(t):null}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+async function load(){
+ try{
+  const c=await api("categories?select=*&active=eq.true&order=sort_order,name");
+  variants=await api("product_variants?select=*,products(*)&active=eq.true&order=created_at.desc");
+  const settings=await api("delivery_settings?select=*&active=eq.true&limit=1");
+  if(settings[0]&&settings[0].rate_per_km)rate=Number(settings[0].rate_per_km);if(settings[0]?.store_lat&&settings[0]?.store_lng){window.gmStoreLat=Number(settings[0].store_lat);window.gmStoreLng=Number(settings[0].store_lng)}
+  cats.innerHTML='<button class="sel" onclick="category(\'all\',this)">All</button>'+c.map(x=>`<button onclick="category('${x.id}',this)">${esc(x.name)}</button>`).join("");
+  render();
+ }catch(e){products.innerHTML='<div class="empty">Products load nahi ho pa rahe. Please refresh the page.</div>'}
+}
+function category(id,b){selectedCat=id;document.querySelectorAll(".cats button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");render()}
+function render(){
+ let q=search.value.toLowerCase();
+ let a=variants.filter(v=>(selectedCat==="all"||v.products?.category_id===selectedCat)&&((v.products?.name||"")+" "+(v.label||"")).toLowerCase().includes(q));
+ products.innerHTML=a.length?a.map(v=>{const mrp=Number(v.mrp||0),p=Number(v.price||0),off=mrp>p?Math.round((mrp-p)*100/mrp):0;return `<div class="product gm-product" onclick="gmOpenProduct('${v.id}')"><button class="gm-heart" onclick="event.stopPropagation();gmWish('${v.id}',this)">${gmIsWish(v.id)?"❤️":"♡"}</button>${v.products?.image_url?`<img class="gm-product-img" src="${esc(v.products.image_url)}" alt="${esc(v.products?.name)}">`:'<div class="emoji">🛍️</div>'}<div class="name">${esc(v.products?.name)}</div><div class="muted">${esc(v.label)}</div>${off?`<span class="gm-off">${off}% OFF</span>`:""}<div class="price">₹${p.toFixed(0)} ${mrp>p?`<span class="gm-mrp">₹${mrp.toFixed(0)}</span>`:""}</div><div class="qty" onclick="event.stopPropagation()"><button onclick="change('${v.id}',-1)">−</button><b>${cart[v.id]?.qty||0}</b><button onclick="change('${v.id}',1)">+</button><button class="add" onclick="change('${v.id}',1)">Add</button></div></div>`}).join(""):'<div class="empty">No products found.</div>';
+ update()
+}
+function change(id,d){const v=variants.find(x=>x.id===id);if(!v)return;cart[id]??={v,qty:0};cart[id].qty=Math.max(0,Math.min(Number(v.stock||9999),cart[id].qty+d));if(!cart[id].qty)delete cart[id];render()}
+function update(){count.textContent=Object.values(cart).reduce((a,x)=>a+x.qty,0);total.textContent=Object.values(cart).reduce((a,x)=>a+x.qty*x.v.price,0).toFixed(0)}
+function openCart(){
+ show("cartScreen");const a=Object.values(cart);
+ cartList.innerHTML=a.length?a.map(x=>`<div class="card line"><span>${esc(x.v.products?.name)}<br><small>${esc(x.v.label)}</small><br>Qty: ${x.qty}</span><b>₹${(x.v.price*x.qty).toFixed(0)}</b></div>`).join("")+'<button class="primary" onclick="showCheckout()">Proceed to Checkout</button>':'<div class="empty">Your cart is empty.</div>'
+}
+function show(id){document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");scrollTo(0,0)}
+function showCheckout(){if(!Object.keys(cart).length)return;show("checkout");calc()}
+function payment(x){payMethod=x;cod.classList.toggle("active",x==="COD");upi.classList.toggle("active",x==="UPI")}
+function haversine(lat1,lon1,lat2,lon2){const R=6371,p=Math.PI/180,a=Math.sin((lat2-lat1)*p/2)**2+Math.cos(lat1*p)*Math.cos(lat2*p)*Math.sin((lon2-lon1)*p/2)**2;return 2*R*Math.asin(Math.sqrt(a))}
+async function getLocation(){
+ const st=document.getElementById("locationStatus");
+ if(!navigator.geolocation){st.textContent="Your browser does not support location.";return}
+ st.textContent="Getting your location…";
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  customerLat=pos.coords.latitude;customerLng=pos.coords.longitude;
+  const storeLat=window.gmStoreLat??21.1269,storeLng=window.gmStoreLng??73.0076;
+  try{
+   const r=await fetch(`https://router.project-osrm.org/route/v1/driving/${storeLng},${storeLat};${customerLng},${customerLat}?overview=false`);
+   const j=await r.json();distanceKm=j.routes?.[0]?.distance?j.routes[0].distance/1000:haversine(storeLat,storeLng,customerLat,customerLng);
+  }catch(e){distanceKm=haversine(storeLat,storeLng,customerLat,customerLng)}
+  locationBox.textContent=`📍 Location selected • ${distanceKm.toFixed(1)} km from Mosali`;
+  st.textContent=`Distance calculated automatically. Delivery: ₹${(distanceKm*rate).toFixed(0)}`;
+  calc();
+ },()=>{st.textContent="Location permission denied. Please allow location in browser settings."},{enableHighAccuracy:true,timeout:12000,maximumAge:60000})
+}
+function calc(){const s=Object.values(cart).reduce((a,x)=>a+x.qty*x.v.price,0),d=distanceKm*rate;summary.innerHTML=`<div class="line"><span>Items</span><b>₹${s.toFixed(0)}</b></div><div class="line"><span>Delivery (${distanceKm.toFixed(1)} km)</span><b>₹${d.toFixed(0)}</b></div><div class="line"><span>Total</span><b>₹${(s+d).toFixed(0)}</b></div>`}
+
+const statusLabels={
+ pending:"Order Received",
+ accepted:"Order Accepted",
+ packing:"Packing",
+ out_for_delivery:"Out for Delivery",
+ delivered:"Delivered",
+ cancelled:"Cancelled"
+};
+const statusFlow=["pending","accepted","packing","out_for_delivery","delivered"];
+
+function showTracking(){
+  show("tracking");
+  loadTracking();
+}
+async function loadTracking(fromSearch=false){
+  const box=document.getElementById("trackBox");
+  let id=document.getElementById("trackOrderId").value.trim();
+  let phone=document.getElementById("trackPhone").value.replace(/\D/g,"");
+
+  if(!id){
+    id=localStorage.getItem("gaonmart_last_order_id") || "";
+    document.getElementById("trackOrderId").value=id;
+  }
+  if(!phone){
+    phone=localStorage.getItem("gaonmart_last_order_phone") || "";
+    document.getElementById("trackPhone").value=phone;
+  }
+
+  if(!id || !phone){
+    box.innerHTML='<div class="empty">Order ID and mobile number required.</div>';
+    return;
+  }
+
+  box.innerHTML="Loading order status…";
+  try{
+    const a=await api("orders?select=id,created_at,order_status,total,delivery_address,phone,distance_km,payment_method,payment_status&id=eq."+encodeURIComponent(id)+"&phone=eq."+encodeURIComponent(phone));
+    const o=a?.[0];
+    if(!o){
+      box.innerHTML='<div class="empty">Order not found. Please check Order ID and mobile number.</div>';
+      return;
+    }
+
+    const current=o.order_status||"pending";
+    const currentIndex=statusFlow.indexOf(current);
+    const steps=current==="cancelled"
+      ? '<div style="margin:14px 0"><span class="step active" style="background:#b42318;color:#fff">CANCELLED</span></div>'
+      : '<div class="steps">'+statusFlow.map((s,i)=>`<span class="step ${i<=currentIndex?"active":""}">${statusLabels[s]}</span>`).join("")+'</div>';
+
+    box.innerHTML=`<b>Order #${esc(o.id.slice(0,8))}</b>
+      <div class="muted" style="margin-top:5px">${new Date(o.created_at).toLocaleString()}</div>
+      <h3 style="margin-bottom:6px">${statusLabels[current]||current}</h3>
+      ${steps}
+      <p><b>Total:</b> ₹${Number(o.total||0).toFixed(0)}<br>
+      <b>Payment:</b> ${esc(String(o.payment_method||"").toUpperCase())}<br>
+      <b>Delivery:</b> ${esc(o.delivery_address||"")}</p>`;
+  }catch(e){
+    box.innerHTML='<div class="empty">Could not load status: '+esc(e.message)+'</div>';
+  }
+}
+
+async function placeOrder(){
+  const customerName=document.getElementById("customerName").value.trim();
+  const a=document.getElementById("address").value.trim();
+  const village=document.getElementById("village").value.trim();
+  const landmark=document.getElementById("landmark").value.trim();
+  const deliveryNote=document.getElementById("deliveryNote").value.trim();
+  const p=document.getElementById("phone").value.replace(/\D/g,"");
+
+  if(!customerName) return alert("Customer name required.");
+  if(!/^\d{10}$/.test(p)) return alert("Enter a valid 10 digit mobile number.");
+  if(!a) return alert("Full delivery address required.");
+  if(!village) return alert("Village / area required.");
+  if(!Object.keys(cart).length) return alert("Your cart is empty.");
+
+  const items=Object.values(cart);
+  const s=items.reduce((x,y)=>x+y.qty*y.v.price,0);
+  const d=customerLat===null ? 0 : distanceKm*rate;
+  const combinedAddress=[a,village,landmark?("Landmark: "+landmark):"",deliveryNote?("Note: "+deliveryNote):""].filter(Boolean).join(", ");
+
+  try{
+    let customerId=null;
+    const existing=await api("customers?select=id&phone=eq."+encodeURIComponent(p)+"&limit=1");
+    if(existing?.[0]){
+      customerId=existing[0].id;
+      await api("customers?id=eq."+encodeURIComponent(customerId),{
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({full_name:customerName})
+      });
+    }else{
+      const created=await api("customers",{
+        method:"POST",
+        headers:{"Prefer":"return=representation"},
+        body:JSON.stringify({phone:p,full_name:customerName})
+      });
+      customerId=created?.[0]?.id;
+    }
+
+    let addressId=null;
+    if(customerId){
+      const createdAddress=await api("addresses",{
+        method:"POST",
+        headers:{"Prefer":"return=representation"},
+        body:JSON.stringify({
+          customer_id:customerId,
+          label:"Home",
+          full_address:a,
+          village:village,
+          landmark:landmark||null,
+          latitude:customerLat,
+          longitude:customerLng
+        })
+      });
+      addressId=createdAddress?.[0]?.id;
+    }
+
+    const o=(await api("orders",{
+      method:"POST",
+      headers:{"Prefer":"return=representation"},
+      body:JSON.stringify({
+        customer_id:customerId,
+        address_id:addressId,
+        delivery_address:combinedAddress,
+        phone:p,
+        subtotal:s,
+        delivery_charge:d,
+        total:s+d,
+        payment_method:payMethod,
+        order_status:"pending",
+        distance_km:customerLat===null ? null : distanceKm,
+        customer_lat:customerLat,
+        customer_lng:customerLng
+      })
+    }))[0];
+
+    await api("order_items",{
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify(items.map(x=>({
+        order_id:o.id,
+        product_variant_id:x.v.id,
+        product_name:x.v.products?.name || null,
+        variant_label:x.v.label || null,
+        quantity:x.qty,
+        unit_price:x.v.price,
+        line_total:x.qty*x.v.price
+      })))
+    });
+
+    localStorage.setItem("gaonmart_last_order_id",o.id);
+    localStorage.setItem("gaonmart_last_order_phone",p);
+    document.getElementById("trackOrderId").value=o.id;
+    document.getElementById("trackPhone").value=p;
+
+    alert("Order placed successfully!\nOrder ID: "+o.id+"\nStatus: Order Received");
+    cart={};
+    update();
+    show("tracking");
+    loadTracking(false);
+  }catch(e){
+    alert("Order failed: "+e.message);
+  }
+}
+
+/* ===== Customer Shop v8 enhancements ===== */
+function gmEsc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function gmShow(id){show(id);if(id==="gmAccount")gmLoadProfile();if(id==="gmOrders")gmLoadOrders()}
+function gmToast(t){const e=document.getElementById("gmToast");e.textContent=t;e.style.display="block";clearTimeout(window.gmToastT);window.gmToastT=setTimeout(()=>e.style.display="none",1800)}
+function gmLoadProfile(){document.getElementById("gmName").value=localStorage.getItem("gaonmart_profile_name")||"";document.getElementById("gmPhone").value=localStorage.getItem("gaonmart_profile_phone")||""}
+function gmSaveProfile(){const n=document.getElementById("gmName").value.trim(),p=document.getElementById("gmPhone").value.replace(/\D/g,"");if(!n||!/^\d{10}$/.test(p))return alert("Name aur valid 10 digit mobile number enter karein.");localStorage.setItem("gaonmart_profile_name",n);localStorage.setItem("gaonmart_profile_phone",p);localStorage.setItem("gaonmart_last_order_phone",p);gmToast("Profile saved")}
+function gmIsWish(id){return JSON.parse(localStorage.getItem("gaonmart_wishlist")||"[]").includes(id)}
+function gmWish(id,b){let a=JSON.parse(localStorage.getItem("gaonmart_wishlist")||"[]");a=a.includes(id)?a.filter(x=>x!==id):a.concat(id);localStorage.setItem("gaonmart_wishlist",JSON.stringify(a));b.textContent=a.includes(id)?"❤️":"♡"}
+async function gmLoadBanners(){try{const a=await api("banners?select=*&active=eq.true&order=sort_order");const e=document.getElementById("gmBanners");e.innerHTML=a.length?a.map(x=>`<div class="gm-banner">${x.image_url?`<img src="${gmEsc(x.image_url)}">`:""}<div class="gm-banner-caption">${gmEsc(x.title||"Special Offer")}</div></div>`).join(""):'<div class="gm-banner"><div class="gm-banner-caption">Fresh groceries delivered to your door</div></div>'}catch(e){document.getElementById("gmBanners").innerHTML='<div class="gm-banner"><div class="gm-banner-caption">Fresh groceries delivered to your door</div></div>'}}
+function gmOpenProduct(id){const v=variants.find(x=>x.id===id);if(!v)return;const mrp=Number(v.mrp||0),p=Number(v.price||0),off=mrp>p?Math.round((mrp-p)*100/mrp):0;document.getElementById("gmProductBox").innerHTML=`<button class="gm-close" onclick="gmCloseProduct()">×</button>${v.products?.image_url?`<img class="gm-detail-img" src="${gmEsc(v.products.image_url)}">`:'<div class="emoji">🛍️</div>'}<h2>${gmEsc(v.products?.name)}</h2><div class="muted">${gmEsc(v.label||"")}</div>${off?`<span class="gm-off">${off}% OFF</span>`:""}<h2>₹${p.toFixed(0)} ${mrp>p?`<span class="gm-mrp">₹${mrp.toFixed(0)}</span>`:""}</h2><p>${gmEsc(v.products?.description||"Quality product from Gaon Mart.")}</p><button class="gm-primary" onclick="change('${v.id}',1);gmCloseProduct();gmToast('Added to cart')">Add to Cart</button>`;document.getElementById("gmProductModal").classList.add("open")}
+function gmCloseProduct(){document.getElementById("gmProductModal").classList.remove("open")}
+async function gmLoadOrders(){const p=(document.getElementById("gmOrderPhone").value||localStorage.getItem("gaonmart_profile_phone")||localStorage.getItem("gaonmart_last_order_phone")||"").replace(/\D/g,"");document.getElementById("gmOrderPhone").value=p;if(!/^\d{10}$/.test(p)){document.getElementById("gmOrderList").innerHTML='<div class="gm-empty">Valid 10 digit mobile number enter karein.</div>';return}try{const a=await api("orders?select=id,created_at,total,order_status,payment_method,delivery_address&phone=eq."+encodeURIComponent(p)+"&order=created_at.desc");document.getElementById("gmOrderList").innerHTML=a.length?a.map(o=>`<div class="gm-card"><b>Order #${gmEsc(String(o.id).slice(0,8))}</b><div class="muted">${new Date(o.created_at).toLocaleString()}</div><p>📦 ${gmEsc(o.order_status||"pending")}<br>💰 ₹${Number(o.total||0).toFixed(0)}<br>💳 ${gmEsc(o.payment_method||"")}</p><button class="gm-primary" onclick="document.getElementById('trackOrderId').value='${o.id}';document.getElementById('trackPhone').value='${p}';showTracking()">🚚 Track</button></div>`).join(""):'<div class="gm-empty">No orders found.</div>'}catch(e){document.getElementById("gmOrderList").innerHTML='<div class="gm-empty">Orders load nahi ho paaye.</div>'}}
+async function gmShowAddresses(){const p=localStorage.getItem("gaonmart_profile_phone")||localStorage.getItem("gaonmart_last_order_phone")||"";if(!p)return alert("Pehle profile save karein.");try{const c=await api("customers?select=id&phone=eq."+encodeURIComponent(p)+"&limit=1");if(!c?.[0])return document.getElementById("gmAddresses").innerHTML='<div class="gm-card">No saved addresses yet.</div>';const a=await api("addresses?select=*&customer_id=eq."+c[0].id+"&order=created_at.desc");document.getElementById("gmAddresses").innerHTML='<div class="gm-card"><h3>Saved Addresses</h3>'+(a.length?a.map(x=>`<div class="gm-line"><span><b>${gmEsc(x.label||"Home")}</b><br>${gmEsc(x.full_address||"")}, ${gmEsc(x.village||"")}${x.landmark?`<br>Landmark: ${gmEsc(x.landmark)}`:""}</span></div>`).join(""):'<div class="gm-empty">No saved addresses.</div>')+'</div>'}catch(e){gmToast("Address load failed")}}
+gmLoadBanners();
+
+load();
+
+/* ===== V12 PRO FIXES & NAVIGATION ===== */
+function gmv12Menu(open){const d=document.getElementById("gmv12Drawer");if(!d)return;d.classList.toggle("open",open===undefined?!d.classList.contains("open"):open)}
+function gmv12Profile(){gmv12Menu(false);gmShow("gmAccount");gmLoadProfile();setTimeout(()=>{const n=localStorage.getItem("gaonmart_profile_name")||"",p=localStorage.getItem("gaonmart_profile_phone")||"";const a=document.getElementById("gmv12UserName"),b=document.getElementById("gmv12UserPhone");if(a)a.textContent=n||"Guest Customer";if(b)b.textContent=p||"Login / save profile"},20)}
+function gmv12Go(id){gmv12Menu(false);show(id);if(id==="gmOrders")gmLoadOrders()}
+function gmv12Help(){gmv12Menu(false);alert("Gaon Mart Support\n\nOrder, delivery ya payment mein problem ho to shop owner se contact karein.")}
+
+function gmv12Track(){
+ gmv12Menu(false);
+ const id=localStorage.getItem("gaonmart_last_order_id")||"";
+ const phone=localStorage.getItem("gaonmart_last_order_phone")||localStorage.getItem("gaonmart_profile_phone")||"";
+ show("tracking");
+ if(id)document.getElementById("trackOrderId").value=id;
+ if(phone)document.getElementById("trackPhone").value=phone;
+ loadTracking(false);
+}
+
+function gmv12Wishlist(){gmv12Menu(false);const ids=JSON.parse(localStorage.getItem("gaonmart_wishlist")||"[]");if(!ids.length){alert("Wishlist empty hai.");return}const old=selectedCat;selectedCat="all";const q=document.getElementById("search");q.value="";render();setTimeout(()=>document.getElementById("products")?.scrollIntoView({behavior:"smooth"}),50)}
+function gmv12Categories(){gmv12Menu(false);document.getElementById("cats")?.scrollIntoView({behavior:"smooth"});document.querySelectorAll(".cats button")[0]?.click()}
+function renderDeals(){const q=document.getElementById("search");q.value="";const a=variants.filter(v=>Number(v.mrp||0)>Number(v.price||0));gmv12RenderList(a,"Best Deals")}
+function renderPopular(){const q=document.getElementById("search");q.value="";gmv12RenderList(variants.slice(0,20),"Popular Products")}
+function renderFresh(){const q=document.getElementById("search");q.value="";gmv12RenderList(variants.slice(-20).reverse(),"Fresh Picks")}
+function gmv12RenderList(a,title){document.querySelector("#home .gmv12-section:last-of-type h3").textContent=title;document.getElementById("products").innerHTML=a.length?a.map(v=>{const mrp=Number(v.mrp||0),p=Number(v.price||0),off=mrp>p?Math.round((mrp-p)*100/mrp):0;return `<div class="product gm-product" onclick="gmOpenProduct('${v.id}')"><button class="gm-heart" onclick="event.stopPropagation();gmWish('${v.id}',this)">${gmIsWish(v.id)?"❤️":"♡"}</button>${v.products?.image_url?`<img class="gm-product-img" src="${esc(v.products.image_url)}">`:'<div class="emoji">🛍️</div>'}<div class="name">${esc(v.products?.name)}</div><div class="muted">${esc(v.label)}</div>${off?`<span class="gm-off">${off}% OFF</span>`:""}<div class="price">₹${p.toFixed(0)} ${mrp>p?`<span class="gm-mrp">₹${mrp.toFixed(0)}</span>`:""}</div><div class="qty" onclick="event.stopPropagation()"><button onclick="change('${v.id}',-1)">−</button><b>${cart[v.id]?.qty||0}</b><button class="add" onclick="change('${v.id}',1)">Add</button></div></div>`}).join(""):'<div class="empty">No products found.</div>'}
+function gmv12UpdateCart(){let n=0,t=0;Object.values(cart).forEach(x=>{n+=x.qty;t+=x.qty*Number(x.v.price||0)});const b=document.getElementById("gmv12CartBar");if(b){b.style.display=n?"block":"none";document.getElementById("gmv12CartText").textContent=`${n} item${n===1?"":"s"} • ₹${t.toFixed(0)}`}}
+const gmv12OldChange=window.change;
+window.change=function(id,d){gmv12OldChange(id,d);gmv12UpdateCart()}
+const gmv12OldRender=window.render;
+window.render=function(){gmv12OldRender();gmv12UpdateCart()}
+/* Swipe menu */
+(function(){let sx=0,sy=0;document.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});document.addEventListener("touchend",e=>{const dx=e.changedTouches[0].clientX-sx,dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>80&&Math.abs(dx)>Math.abs(dy)){if(sx<35&&dx>0)gmv12Menu(true);else if(dx<0&&document.getElementById("gmv12Drawer")?.classList.contains("open"))gmv12Menu(false)}},{passive:true})})();
+
+/* Replace order function with schema-aware, step-specific error handling. */
+window.placeOrder=async function(){
+ const err=document.getElementById("gmv12OrderError");if(err){err.style.display="none";err.textContent=""}
+ const customerName=document.getElementById("customerName").value.trim();
+ const a=document.getElementById("address").value.trim(), village=document.getElementById("village").value.trim();
+ const landmark=document.getElementById("landmark").value.trim(), deliveryNote=document.getElementById("deliveryNote").value.trim();
+ const p=document.getElementById("phone").value.replace(/\D/g,"");
+ if(!customerName)return alert("Customer name required.");
+ if(!/^\d{10}$/.test(p))return alert("Enter a valid 10 digit mobile number.");
+ if(!a)return alert("Full delivery address required.");
+ if(!village)return alert("Village / area required.");
+ if(!Object.keys(cart).length)return alert("Your cart is empty.");
+ const items=Object.values(cart), subtotal=items.reduce((x,y)=>x+y.qty*Number(y.v.price||0),0);
+ const delivery=customerLat===null?0:distanceKm*rate;
+ const combined=[a,village,landmark?("Landmark: "+landmark):"",deliveryNote?("Note: "+deliveryNote):""].filter(Boolean).join(", ");
+ const fail=(step,e)=>{if(err){err.style.display="block";err.textContent=`Order failed at ${step}.\n${e?.message||e||"Unknown error"}\n\nPlease try again.`}else alert("Order failed at "+step+": "+(e?.message||e));};
+ try{
+   let customerId=null;
+   try{
+     const existing=await api("customers?select=id&phone=eq."+encodeURIComponent(p)+"&limit=1");
+     if(existing?.[0]){customerId=existing[0].id;await api("customers?id=eq."+encodeURIComponent(customerId),{method:"PATCH",headers:{"Prefer":"return=minimal"},body:JSON.stringify({full_name:customerName})})}
+     else{const created=await api("customers",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({phone:p,full_name:customerName})});customerId=created?.[0]?.id}
+   }catch(e){return fail("customer profile",e)}
+   let addressId=null;
+   try{
+     const created=await api("addresses",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({customer_id:customerId,label:"Home",full_address:a,village:village||null,landmark:landmark||null,latitude:customerLat,longitude:customerLng})});
+     addressId=created?.[0]?.id||null;
+   }catch(e){return fail("delivery address",e)}
+   let order=null;
+   try{
+     order=(await api("orders",{method:"POST",headers:{"Prefer":"return=representation"},body:JSON.stringify({customer_id:customerId,address_id:addressId,delivery_address:combined,phone:p,subtotal:subtotal,delivery_charge:delivery,total:subtotal+delivery,payment_method:payMethod,payment_status:"pending",order_status:"pending",distance_km:customerLat===null?null:distanceKm,customer_lat:customerLat,customer_lng:customerLng})}))[0];
+     if(!order?.id)throw Error("Order ID was not returned by Supabase.");
+   }catch(e){return fail("order creation",e)}
+   try{
+     await api("order_items",{method:"POST",headers:{"Prefer":"return=minimal"},body:JSON.stringify(items.map(x=>({order_id:order.id,product_variant_id:x.v.id,product_name:x.v.products?.name||null,variant_label:x.v.label||null,quantity:x.qty,unit_price:x.v.price,line_total:x.qty*x.v.price})))});
+   }catch(e){return fail("order items",e)}
+   localStorage.setItem("gaonmart_last_order_id",order.id);localStorage.setItem("gaonmart_last_order_phone",p);
+   document.getElementById("trackOrderId").value=order.id;document.getElementById("trackPhone").value=p;
+   cart={};update();gmv12UpdateCart();
+   show("tracking");loadTracking(false);
+ }catch(e){fail("unexpected error",e)}
+};
+
+document.addEventListener("DOMContentLoaded",()=>{const n=localStorage.getItem("gaonmart_profile_name")||"",p=localStorage.getItem("gaonmart_profile_phone")||"";const a=document.getElementById("gmv12UserName"),b=document.getElementById("gmv12UserPhone");if(a)a.textContent=n||"Guest Customer";if(b)b.textContent=p||"Login / save profile";const loc=document.getElementById("locationBox");if(loc)loc.addEventListener("click",getLocation);setTimeout(gmv12UpdateCart,100)});
+
+</script>
+
+<section id="gmv13Product" class="screen gmv15-detail">
+  <div class="gmv13-topbar">
+    <button class="gmv13-back" onclick="gmv13Back()">←</button>
+    <div class="gmv13-title" id="gmv13TopTitle">Product</div>
+    <button class="gmv13-iconbtn" onclick="gmv13Share()">↗</button>
+  </div>
+  <div id="gmv13Body"></div>
+  <div id="gmv13Sticky" class="gmv13-sticky"></div>
+</section>
+
+<script>
+/* ===== GAON MART V13 PRODUCT EXPERIENCE ===== */
+(function(){
+ let current=null, gallery=[], galleryIndex=0, previousScreen="home";
+ const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+ const money=v=>"₹"+Number(v||0).toFixed(0);
+ const allVariants=()=>typeof variants!=="undefined"?variants:[];
+ const pname=v=>v?.products?.name||v?.name||"Product";
+ const company=v=>v?.products?.brand||v?.products?.company||v?.brand||"Brand";
+ function imgs(v){
+   const p=v?.products||v||{},a=[];
+   ["image_url","image_url_2","image_url_3","image_url_4","image_url_5"].forEach(k=>{if(p[k])a.push(p[k])});
+   if(Array.isArray(p.images))a.push(...p.images.filter(Boolean));
+   if(Array.isArray(v?.images))a.push(...v.images.filter(Boolean));
+   return [...new Set(a)];
+ }
+ function go(v){
+   if(!v)return;
+   current=v;gallery=imgs(v);galleryIndex=0;
+   previousScreen=document.querySelector(".screen.active")?.id||"home";
+   if(typeof show==="function")show("gmv13Product");
+   render();window.scrollTo(0,0);
+ }
+ window.gmv13OpenById=id=>{const v=allVariants().find(x=>String(x.id)===String(id));if(v)go(v)};
+ window.gmv13Add=id=>{if(typeof change==="function"){change(id,1);if(typeof toast==="function")toast("Added to cart")}};
+
+ function card(v,label){
+   const im=imgs(v)[0];
+   return `<div class="gmv13-simcard" onclick="gmv13OpenById('${esc(v.id)}')">${label?`<span class="gmv13-label">${esc(label)}</span>`:""}
+   ${im?`<img src="${esc(im)}">`:`<div style="height:110px;display:grid;place-items:center;font-size:45px">🛍️</div>`}
+   <b>${esc(pname(v))}</b><small>${esc(v.label||"")}</small><div class="gmv13-mini-price">${money(v.price)}</div>
+   <button onclick="event.stopPropagation();gmv13Add('${esc(v.id)}')">ADD</button></div>`;
+ }
+ function render(){
+   const im=gallery[galleryIndex],mrp=Number(current.mrp||0),price=Number(current.price||0),save=Math.max(0,mrp-price);
+   document.getElementById("gmv13TopTitle").textContent=pname(current);
+   document.getElementById("gmv13Body").innerHTML=`
+   <div class="gmv13-gallery"><div class="gmv13-mainimg">
+   ${im?`<img id="gmv13MainImage" src="${esc(im)}" onclick="gmv13NextImage()">`:`<div style="font-size:70px">🛍️</div>`}
+   ${gallery.length>1?`<span class="gmv13-count">${galleryIndex+1} / ${gallery.length}</span>`:""}</div>
+   ${gallery.length>1?`<div class="gmv13-thumbs">${gallery.map((x,i)=>`<button class="gmv13-thumb ${i===galleryIndex?"active":""}" onclick="gmv13Image(${i})"><img src="${esc(x)}"></button>`).join("")}</div>`:""}</div>
+   <div class="gmv13-info"><div class="gmv13-name">${esc(pname(current))}</div>
+   <div class="gmv13-company">Company / Brand: <b>${esc(company(current))}</b></div>
+   ${current.label?`<span class="gmv13-variant">${esc(current.label)}</span>`:""}
+   <div class="gmv13-price">${money(price)} ${mrp>price?`<span class="gmv13-mrp">${money(mrp)}</span>`:""}</div>
+   ${save?`<div class="gmv13-save">You save ${money(save)} • ${Math.round(save*100/mrp)}% OFF</div>`:""}</div>
+   <div class="gmv13-section"><h3>Product details</h3><div class="gmv13-desc">${esc(current.products?.description||current.description||"Quality product available for quick local delivery.")}</div></div>
+   <div id="gmv13Similar" class="gmv13-section"></div>
+   <div id="gmv13Suggestions" class="gmv13-section"></div>
+   <div id="gmv13Category" class="gmv13-section"></div>
+   <div id="gmv13More" class="gmv13-section"></div>`;
+   document.getElementById("gmv13Sticky").innerHTML=`<div class="qty"><button onclick="gmv13Qty(-1)">−</button><span id="gmv13Qty">1</span><button onclick="gmv13Qty(1)">+</button></div><button class="gmv13-add" onclick="gmv13Add('${esc(current.id)}')">ADD TO CART • ${money(price)}</button>`;
+   recommendations();
+ }
+ function recommendations(){
+   const a=allVariants(),cat=current.products?.category_id,co=company(current);
+   const sim=a.filter(v=>v.id!==current.id&&cat&&v.products?.category_id===cat&&company(v)!==co).slice(0,8);
+   const sug=a.filter(v=>v.id!==current.id).slice(0,8);
+   const catItems=a.filter(v=>v.id!==current.id&&cat&&v.products?.category_id===cat).slice(0,12);
+   const more=a.filter(v=>v.id!==current.id).slice(8,20);
+   document.getElementById("gmv13Similar").innerHTML=`<h3>🔄 Similar item • Other company</h3><div style="font-size:11px;color:#69736d;margin:-4px 0 10px">Same category/type, different company — compare both products.</div><div class="gmv13-compare">${sim.length?sim.map(v=>card(v,"OTHER BRAND")).join(""):'<div>No other-brand match found.</div>'}</div>`;
+   document.getElementById("gmv13Suggestions").innerHTML=`<h3>✨ You may also like</h3><div class="gmv13-compare">${sug.map(v=>card(v)).join("")}</div>`;
+   document.getElementById("gmv13Category").innerHTML=`<h3>🛍️ More from this category</h3><div class="gmv13-compare">${catItems.map(v=>card(v)).join("")}</div>`;
+   document.getElementById("gmv13More").innerHTML=`<h3>🔥 More products for you</h3><div class="gmv13-grid">${more.map(v=>`<div>${card(v)}</div>`).join("")}</div>`;
+ }
+ window.gmv13Image=i=>{galleryIndex=i;galleryOnly()};
+ window.gmv13NextImage=()=>{if(gallery.length>1){galleryIndex=(galleryIndex+1)%gallery.length;galleryOnly()}};
+ function galleryOnly(){const x=document.getElementById("gmv13MainImage");if(x)x.src=gallery[galleryIndex];document.querySelectorAll(".gmv13-thumb").forEach((e,i)=>e.classList.toggle("active",i===galleryIndex));const c=document.querySelector(".gmv13-count");if(c)c.textContent=`${galleryIndex+1} / ${gallery.length}`;}
+ window.gmv13Qty=n=>{const e=document.getElementById("gmv13Qty");e.textContent=Math.max(1,Number(e.textContent||1)+n)};
+ window.gmv13Back=()=>{if(typeof show==="function")show(previousScreen||"home");window.scrollTo(0,0)};
+ window.gmv13Share=()=>{if(!current)return;const text=`${pname(current)} - ${money(current.price)}`;if(navigator.share)navigator.share({title:pname(current),text}).catch(()=>{});else if(navigator.clipboard){navigator.clipboard.writeText(text);if(typeof toast==="function")toast("Product details copied")}};
+ let sx=0;
+ document.addEventListener("touchstart",e=>{if(document.getElementById("gmv13Product")?.classList.contains("active"))sx=e.touches[0].clientX},{passive:true});
+ document.addEventListener("touchend",e=>{if(!document.getElementById("gmv13Product")?.classList.contains("active"))return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>50){if(dx<0)gmv13NextImage();else{galleryIndex=(galleryIndex-1+gallery.length)%gallery.length;galleryOnly()}}},{passive:true});
+ const old=window.openProduct;
+ window.openProduct=function(id){const v=allVariants().find(x=>String(x.id)===String(id));if(v)go(v);else if(old)old(id)};
+})();
+</script>
+
+<script>
+/* ===== V14: FULL PRODUCT DETAIL PAGE ===== */
+(function(){
+  const E=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+  const money=v=>"₹"+Number(v||0).toFixed(0);
+
+  function getProduct(id){
+    return (typeof variants!=="undefined"?variants:[]).find(v=>String(v.id)===String(id));
+  }
+
+  function detailImages(v){
+    const p=v?.products||{}, a=[];
+    ["image_url","image_url_2","image_url_3","image_url_4","image_url_5","image_url_6","image_url_7","image_url_8"].forEach(k=>{if(p[k])a.push(p[k])});
+    if(Array.isArray(p.images))a.push(...p.images.filter(Boolean));
+    if(Array.isArray(v.images))a.push(...v.images.filter(Boolean));
+    return [...new Set(a)];
+  }
+
+  function labelize(k){
+    return k.replace(/_/g," ").replace(/\b\w/g,x=>x.toUpperCase());
+  }
+
+  function usefulSpecs(v){
+    const p=v?.products||{}, rows=[];
+    const skip=new Set(["id","created_at","updated_at","image_url","image_url_2","image_url_3","image_url_4","image_url_5","image_url_6","image_url_7","image_url_8","images","description","name","category_id"]);
+    Object.entries(p).forEach(([k,val])=>{
+      if(skip.has(k)||val===null||val===undefined||val==="")return;
+      if(typeof val==="object")return;
+      rows.push([labelize(k),String(val)]);
+    });
+    [["Variant",v.label],["Stock",v.stock],["MRP",v.mrp?money(v.mrp):""],["Selling Price",v.price?money(v.price):""],["SKU",v.sku||v.sku_code]].forEach(([k,val])=>{
+      if(val!==undefined&&val!==null&&val!=="")rows.push([k,String(val)]);
+    });
+    const seen=new Set();
+    return rows.filter(([k])=>{if(seen.has(k))return false;seen.add(k);return true}).slice(0,35);
+  }
+
+  function renderFull(v){
+    if(!v)return;
+    const p=v.products||{}, imgs=detailImages(v);
+    const mrp=Number(v.mrp||0), price=Number(v.price||0);
+    const off=mrp>price?Math.round((mrp-price)*100/mrp):0;
+    const save=Math.max(0,mrp-price);
+    const body=document.getElementById("gmv13Body");
+    const sticky=document.getElementById("gmv13Sticky");
+    if(!body)return;
+
+    document.getElementById("gmv13TopTitle").textContent=p.name||"Product";
+
+    const specs=usefulSpecs(v);
+    body.innerHTML=`
+      <div class="gmv14-hero">
+        <div class="gmv14-photo">
+          ${imgs[0]?`<img id="gmv14Main" src="${E(imgs[0])}" alt="${E(p.name||"Product")}">`:`<div style="font-size:75px">🛍️</div>`}
+          <div class="gmv14-badges">${off?`<span class="gmv14-badge">${off}% OFF</span>`:""}${Number(v.stock||0)>0?`<span class="gmv14-badge">IN STOCK</span>`:""}</div>
+          ${imgs.length>1?`<button class="zoom" onclick="gmv14Next()">📷 ${1}/${imgs.length}</button>`:""}
+        </div>
+        ${imgs.length>1?`<div class="gmv14-thumbbar">${imgs.map((x,i)=>`<button class="gmv14-thumb ${i===0?"active":""}" onclick="gmv14Img(${i})"><img src="${E(x)}"></button>`).join("")}</div>`:""}
+        <div class="gmv14-info">
+          <div class="gmv14-name">${E(p.name||"Product")}</div>
+          <div class="gmv14-sub">${E(p.brand||p.company||v.brand||"Gaon Mart")} ${v.label?`• ${E(v.label)}`:""}</div>
+          <div class="gmv14-price">${money(price)} ${mrp>price?`<span class="gmv14-mrp">${money(mrp)}</span>`:""}</div>
+          ${save?`<div class="gmv14-save">You save ${money(save)} • ${off}% OFF</div>`:""}
+        </div>
+      </div>
+
+      <div class="gmv14-section">
+        <h3>📋 Product Description</h3>
+        <div class="gmv14-desc">${E(p.description||"Is product ki detailed description abhi available nahi hai.")}</div>
+      </div>
+
+      <div class="gmv14-section">
+        <h3>📦 Product Information</h3>
+        <div class="gmv14-specs">
+          ${specs.length?specs.map(r=>`<div class="gmv14-row"><span>${E(r[0])}</span><span>${E(r[1])}</span></div>`).join(""):`<div class="gmv14-desc">Product information available nahi hai.</div>`}
+        </div>
+      </div>
+
+      <div id="gmv13Similar" class="gmv14-section"></div>
+      <div id="gmv13Suggestions" class="gmv14-section"></div>
+      <div id="gmv13Category" class="gmv14-section"></div>
+      <div id="gmv13More" class="gmv14-section"></div>
+    `;
+
+    sticky.className="gmv14-bottom";
+    sticky.innerHTML=`<div class="v14qty"><button onclick="gmv14Qty(-1)">−</button><b id="gmv14Qty">1</b><button onclick="gmv14Qty(1)">+</button></div><button class="gmv14-cart" onclick="gmv14Add('${E(v.id)}')">ADD TO CART • ${money(price)}</button>`;
+
+    renderRows(v);
+    window.scrollTo(0,0);
+  }
+
+  function smallCard(v,label){
+    const p=v.products||{}, im=detailImages(v)[0];
+    return `<div style="min-width:155px;max-width:155px;background:#fff;border:1px solid #e5eae6;border-radius:13px;padding:9px;position:relative" onclick="gmv14Open('${E(v.id)}')">
+      ${label?`<span style="position:absolute;left:7px;top:7px;background:#16834a;color:#fff;padding:4px 6px;border-radius:6px;font-size:9px;font-weight:900">${E(label)}</span>`:""}
+      ${im?`<img src="${E(im)}" style="width:100%;height:115px;object-fit:contain;background:#fafafa;border-radius:9px">`:`<div style="height:115px;display:grid;place-items:center;font-size:48px">🛍️</div>`}
+      <b style="font-size:12px;display:block;margin-top:7px">${E(p.name||"Product")}</b>
+      <small style="color:#69736d">${E(v.label||"")}</small>
+      <div style="font-weight:900;margin-top:5px">${money(v.price)}</div>
+      <button style="width:100%;margin-top:7px;border:1px solid #16834a;background:#fff;color:#16834a;border-radius:8px;padding:7px;font-weight:900" onclick="event.stopPropagation();gmv14Add('${E(v.id)}')">ADD</button>
+    </div>`;
+  }
+
+  function renderRows(v){
+    const all=typeof variants!=="undefined"?variants:[];
+    const cat=v.products?.category_id, brand=(v.products?.brand||v.products?.company||v.brand||"").toLowerCase();
+    const similar=all.filter(x=>x.id!==v.id&&cat&&x.products?.category_id===cat&&((x.products?.brand||x.products?.company||x.brand||"").toLowerCase()!==brand)).slice(0,10);
+    const suggestions=all.filter(x=>x.id!==v.id).slice(0,10);
+    const category=all.filter(x=>x.id!==v.id&&cat&&x.products?.category_id===cat).slice(0,12);
+    const more=all.filter(x=>x.id!==v.id).slice(10,24);
+
+    const make=(title,sub,arr,label)=>`<h3>${title}</h3>${sub?`<div style="font-size:11px;color:#69736d;margin:-5px 0 10px">${sub}</div>`:""}<div style="display:flex;gap:10px;overflow:auto;padding-bottom:3px">${arr.length?arr.map(x=>smallCard(x,label)).join(""):"<div style='color:#69736d;font-size:13px'>No products available.</div>"}</div>`;
+    document.getElementById("gmv13Similar").innerHTML=make("🔄 Similar Item • Other Company","Same category/type ka doosri company ka product — customer dono compare kar sakta hai.",similar,"OTHER BRAND");
+    document.getElementById("gmv13Suggestions").innerHTML=make("✨ You May Also Like","Customer ke liye aur useful suggestions.",suggestions,"");
+    document.getElementById("gmv13Category").innerHTML=make("🛍️ More From This Category","Isi category ke aur products.",category,"");
+    document.getElementById("gmv13More").innerHTML=make("🔥 More Products","Aur products browse karein.",more,"");
+  }
+
+  window.gmv14Open=function(id){
+    const v=getProduct(id);
+    if(!v)return;
+    if(typeof show==="function")show("gmv13Product");
+    renderFull(v);
+  };
+  window.gmOpenProduct=function(id){gmv14Open(id)}; // product cards now open the full page
+  window.gmv14Add=function(id){if(typeof change==="function"){change(id,1);if(typeof gmToast==="function")gmToast("Added to cart")}};
+  window.gmv14Qty=function(n){const e=document.getElementById("gmv14Qty");if(e)e.textContent=Math.max(1,Number(e.textContent||1)+n)};
+  let gi=0,gimgs=[];
+  window.gmv14Img=function(i){gimgs=window.__gmv14Imgs||[];gi=i;const im=document.getElementById("gmv14Main");if(im)im.src=gimgs[gi];document.querySelectorAll(".gmv14-thumb").forEach((x,j)=>x.classList.toggle("active",j===gi))};
+  window.gmv14Next=function(){gimgs=window.__gmv14Imgs||[];if(!gimgs.length)return;gi=(gi+1)%gimgs.length;gmv14Img(gi)};
+
+  // Patch renderFull to remember the gallery for next/previous image.
+  const oldRenderFull=renderFull;
+  // Re-assign through a wrapper after declaration is not needed; gallery is captured from DOM
+  // below by reading thumbnail image sources.
+  const originalOpen=window.gmv14Open;
+  window.gmv14Open=function(id){
+    const v=getProduct(id);if(!v)return;
+    if(typeof show==="function")show("gmv13Product");
+    const imgs=detailImages(v);window.__gmv14Imgs=imgs;gi=0;
+    oldRenderFull(v);
+    window.__gmv14Imgs=imgs;
+  };
+
+  // Swipe through product images.
+  let sx=0;
+  document.addEventListener("touchstart",e=>{
+    if(document.getElementById("gmv13Product")?.classList.contains("active"))sx=e.touches[0].clientX;
+  },{passive:true});
+  document.addEventListener("touchend",e=>{
+    if(!document.getElementById("gmv13Product")?.classList.contains("active"))return;
+    const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>50&&window.__gmv14Imgs?.length>1){
+      gi=(gi+(dx<0?1:-1)+window.__gmv14Imgs.length)%window.__gmv14Imgs.length;
+      gmv14Img(gi);
+    }
+  },{passive:true});
+})();
+</script>
+
+<script>
+/* ===== GAON MART V15: FULLSCREEN PRODUCT + COMPLETE IMAGE GALLERY ===== */
+(function(){
+  const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+  const money=v=>"₹"+Number(v||0).toFixed(0);
+  let current=null, images=[], imageIndex=0, previousScreen="home";
+
+  function all(){return typeof variants!=="undefined"?variants:[]}
+  function get(id){return all().find(v=>String(v.id)===String(id))}
+  function collectImages(v){
+    const p=v?.products||{}, result=[];
+    // Support the common image columns used by existing Shop/Admin versions.
+    Object.keys(p).forEach(k=>{
+      const val=p[k];
+      if(typeof val==="string" && val.trim() && /(image|photo|picture|img|url)/i.test(k)) result.push(val.trim());
+      if(Array.isArray(val)) result.push(...val.filter(x=>typeof x==="string"&&x.trim()));
+    });
+    Object.keys(v||{}).forEach(k=>{
+      const val=v[k];
+      if(typeof val==="string" && val.trim() && /(image|photo|picture|img|url)/i.test(k)) result.push(val.trim());
+      if(Array.isArray(val)) result.push(...val.filter(x=>typeof x==="string"&&x.trim()));
+    });
+    // Also support JSON-string arrays.
+    [p.images,v.images].forEach(val=>{
+      if(typeof val==="string"){
+        try{const a=JSON.parse(val);if(Array.isArray(a))result.push(...a.filter(x=>typeof x==="string"&&x.trim()))}catch(_){}
+      }
+    });
+    return [...new Set(result)];
+  }
+  function specs(v){
+    const p=v.products||{}, rows=[], skip=/^(id|created_at|updated_at|image_url|images|description|name|category_id)$/i;
+    Object.entries(p).forEach(([k,val])=>{
+      if(val==null||val===""||skip.test(k)||typeof val==="object")return;
+      if(/image|photo|picture|img/i.test(k))return;
+      rows.push([k.replace(/_/g," ").replace(/\b\w/g,x=>x.toUpperCase()),String(val)]);
+    });
+    [["Variant",v.label],["SKU",v.sku||v.sku_code],["Stock",v.stock],["MRP",v.mrp?money(v.mrp):""],["Selling Price",v.price?money(v.price):""]].forEach(([k,val])=>{
+      if(val!==undefined&&val!==null&&val!=="")rows.push([k,String(val)]);
+    });
+    const seen=new Set();return rows.filter(r=>{if(seen.has(r[0]))return false;seen.add(r[0]);return true}).slice(0,40);
+  }
+
+  function render(){
+    if(!current)return;
+    const p=current.products||{}, mrp=Number(current.mrp||0), price=Number(current.price||0);
+    const off=mrp>price?Math.round((mrp-price)*100/mrp):0;
+    document.getElementById("gmv13TopTitle").textContent=p.name||"Product";
+
+    const img=images[imageIndex];
+    const rows=specs(current);
+    document.getElementById("gmv13Body").innerHTML=`
+      <div class="gmv15-fullhero">
+        <div class="gmv15-photo">
+          ${img?`<img id="gmv15Main" src="${esc(img)}" alt="${esc(p.name||"Product")}">`:`<div style="font-size:75px">🛍️</div>`}
+          <div class="gmv15-badges">${off?`<span class="gmv15-badge">${off}% OFF</span>`:""}${Number(current.stock||0)>0?`<span class="gmv15-badge">IN STOCK</span>`:""}</div>
+          ${images.length>1?`
+            <button class="gmv15-nav gmv15-prev" onclick="gmv15Prev()">‹</button>
+            <button class="gmv15-nav gmv15-next" onclick="gmv15Next()">›</button>
+            <button class="gmv15-counter" onclick="gmv15Next()">📷 ${imageIndex+1} / ${images.length}</button>`:""}
+        </div>
+        ${images.length>1?`<div class="gmv15-thumbs">${images.map((x,i)=>`<button class="gmv15-thumb ${i===imageIndex?"active":""}" onclick="gmv15Image(${i})"><img src="${esc(x)}"></button>`).join("")}</div>`:""}
+        <div class="gmv15-info">
+          <div class="gmv15-name">${esc(p.name||"Product")}</div>
+          <div class="gmv15-sub">${esc(p.brand||p.company||current.brand||"Gaon Mart")}${current.label?` • ${esc(current.label)}`:""}</div>
+          <div class="gmv15-price">${money(price)} ${mrp>price?`<span class="gmv15-mrp">${money(mrp)}</span>`:""}</div>
+          ${off?`<div class="gmv15-save">You save ${money(mrp-price)} • ${off}% OFF</div>`:""}
+        </div>
+      </div>
+
+      <div class="gmv15-section"><h3>📋 Product Description</h3><div class="gmv15-desc">${esc(p.description||"Product description available nahi hai.")}</div></div>
+      <div class="gmv15-section"><h3>📦 Product Information</h3><div class="gmv15-specs">${rows.length?rows.map(r=>`<div class="gmv15-row"><span>${esc(r[0])}</span><span>${esc(r[1])}</span></div>`).join(""):"<div class='gmv15-desc'>Product information available nahi hai.</div>"}</div></div>
+      <div id="gmv15Similar" class="gmv15-section"></div>
+      <div id="gmv15Suggestions" class="gmv15-section"></div>
+      <div id="gmv15Category" class="gmv15-section"></div>
+      <div id="gmv15More" class="gmv15-section"></div>
+    `;
+    document.getElementById("gmv13Sticky").className="gmv15-bottom";
+    document.getElementById("gmv13Sticky").innerHTML=`<div class="gmv15-qty"><button onclick="gmv15Qty(-1)">−</button><b id="gmv15Qty">1</b><button onclick="gmv15Qty(1)">+</button></div><button class="gmv15-cart" onclick="gmv15Add('${esc(current.id)}')">ADD TO CART • ${money(price)}</button>`;
+    recommendations();
+    window.scrollTo(0,0);
+  }
+
+  function card(v,label){
+    const p=v.products||{}, im=collectImages(v)[0];
+    return `<div style="min-width:155px;max-width:155px;background:#fff;border:1px solid #e5eae6;border-radius:13px;padding:9px;position:relative" onclick="gmv15Open('${esc(v.id)}')">
+      ${label?`<span style="position:absolute;left:7px;top:7px;background:#16834a;color:#fff;padding:4px 6px;border-radius:6px;font-size:9px;font-weight:900">${esc(label)}</span>`:""}
+      ${im?`<img src="${esc(im)}" style="width:100%;height:115px;object-fit:contain;background:#fafafa;border-radius:9px">`:`<div style="height:115px;display:grid;place-items:center;font-size:48px">🛍️</div>`}
+      <b style="font-size:12px;display:block;margin-top:7px">${esc(p.name||"Product")}</b>
+      <small style="color:#69736d">${esc(v.label||"")}</small><div style="font-weight:900;margin-top:5px">${money(v.price)}</div>
+      <button style="width:100%;margin-top:7px;border:1px solid #16834a;background:#fff;color:#16834a;border-radius:8px;padding:7px;font-weight:900" onclick="event.stopPropagation();gmv15Add('${esc(v.id)}')">ADD</button>
+    </div>`;
+  }
+  function recommendations(){
+    const a=all(),cat=current.products?.category_id,brand=(current.products?.brand||current.products?.company||current.brand||"").toLowerCase();
+    const similar=a.filter(v=>v.id!==current.id&&cat&&v.products?.category_id===cat&&(v.products?.brand||v.products?.company||v.brand||"").toLowerCase()!==brand).slice(0,10);
+    const sug=a.filter(v=>v.id!==current.id).slice(0,10);
+    const category=a.filter(v=>v.id!==current.id&&cat&&v.products?.category_id===cat).slice(0,12);
+    const more=a.filter(v=>v.id!==current.id).slice(10,24);
+    const row=(title,sub,arr,label)=>`<h3>${title}</h3>${sub?`<div style="font-size:11px;color:#69736d;margin:-5px 0 10px">${sub}</div>`:""}<div style="display:flex;gap:10px;overflow:auto;padding-bottom:3px">${arr.length?arr.map(v=>card(v,label)).join(""):"<div style='font-size:13px;color:#69736d'>No products available.</div>"}</div>`;
+    document.getElementById("gmv15Similar").innerHTML=row("🔄 Similar Item • Other Company","Same category/type ka doosri company ka product — dono compare karein.",similar,"OTHER BRAND");
+    document.getElementById("gmv15Suggestions").innerHTML=row("✨ You May Also Like","Aur useful products.",sug,"");
+    document.getElementById("gmv15Category").innerHTML=row("🛍️ More From This Category","Isi category ke aur products.",category,"");
+    document.getElementById("gmv15More").innerHTML=row("🔥 More Products","Aur products browse karein.",more,"");
+  }
+
+  window.gmv15Open=function(id){
+    const v=get(id);if(!v)return;
+    previousScreen=document.querySelector(".screen.active")?.id||"home";
+    current=v;images=collectImages(v);imageIndex=0;
+    if(typeof show==="function")show("gmv13Product");
+    render();
+  };
+  // Existing product cards call this function.
+  window.gmOpenProduct=function(id){gmv15Open(id)};
+  window.gmv13OpenById=function(id){gmv15Open(id)};
+  window.gmv15Image=function(i){if(!images.length)return;imageIndex=Math.max(0,Math.min(i,images.length-1));render()};
+  window.gmv15Next=function(){if(images.length){imageIndex=(imageIndex+1)%images.length;render()}};
+  window.gmv15Prev=function(){if(images.length){imageIndex=(imageIndex-1+images.length)%images.length;render()}};
+  window.gmv15Qty=function(n){const e=document.getElementById("gmv15Qty");if(e)e.textContent=Math.max(1,Number(e.textContent||1)+n)};
+  window.gmv15Add=function(id){if(typeof change==="function"){change(id,1);if(typeof toast==="function")toast("Added to cart");else if(typeof gmToast==="function")gmToast("Added to cart")}};
+  window.gmv13Back=function(){if(typeof show==="function")show(previousScreen||"home");window.scrollTo(0,0)};
+
+  // Replace the product-detail top bar with a compact header and a normal-flow search.
+  const detail=document.getElementById("gmv13Product");
+  if(detail){
+    const oldTop=detail.querySelector(".gmv13-topbar");
+    if(oldTop)oldTop.outerHTML=`<div class="gmv15-top"><button class="gmv15-back" onclick="gmv13Back()">←</button><div class="gmv15-title" id="gmv13TopTitle">Product</div><button class="gmv15-share" onclick="navigator.share?navigator.share({title:document.title,text:document.getElementById('gmv13TopTitle')?.textContent||'Product'}):null">↗</button></div><div class="gmv15-searchwrap"><div class="gmv15-search"><span>⌕</span><input id="gmv15Search" placeholder="Search products..." onkeydown="if(event.key==='Enter'&&this.value.trim()&&typeof window.filterProducts==='function')window.filterProducts(this.value.trim())"></div></div>`;
+  }
+
+  // Product detail search is intentionally NOT sticky: it scrolls away naturally.
+  // Swipe image gallery.
+  let sx=0;
+  document.addEventListener("touchstart",e=>{if(detail?.classList.contains("active"))sx=e.touches[0].clientX},{passive:true});
+  document.addEventListener("touchend",e=>{
+    if(!detail?.classList.contains("active")||images.length<2)return;
+    const dx=e.changedTouches[0].clientX-sx;
+    if(Math.abs(dx)>50){if(dx<0)gmv15Next();else gmv15Prev();}
+  },{passive:true});
+})();
+</script>
+</body></html>
