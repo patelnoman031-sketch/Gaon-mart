@@ -1,0 +1,1646 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="build" content="gaon-mart-admin-login-ui-v38-2026-08-14">
+<title>Gaon Mart — Admin</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%230B6B3A'/%3E%3Cpath d='M18 26h28l-3 20a4 4 0 01-4 3.4H25a4 4 0 01-4-3.4l-3-20z' fill='%23FFC22E'/%3E%3Cpath d='M24 26c0-6 3.6-10 8-10s8 4 8 10' stroke='%230B6B3A' stroke-width='3' fill='none' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0B6B3A;
+  --green-dark:#073E22;
+  --green-tint:#EAF6EE;
+  --mango:#FFC22E;
+  --mango-deep:#F2A400;
+  --bg:#F5F8F1;
+  --ink:#12261C;
+  --muted:#6C7C71;
+  --surface:#FFFFFF;
+  --danger:#C4291E;
+  --radius:16px;
+  --shadow:0 6px 20px rgba(11,107,58,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Manrope',Arial,sans-serif;background:var(--bg);color:var(--ink)}
+h1,h2,h3,.brand-font{font-family:'Baloo 2','Manrope',sans-serif}
+.logo-badge{width:40px;height:40px;border-radius:50%;background:linear-gradient(160deg,var(--mango),var(--mango-deep));display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.18);flex-shrink:0}
+.logo-badge svg{width:24px;height:24px}
+header{background:linear-gradient(120deg,var(--green) 0%,var(--green-dark) 100%);color:#fff;padding:14px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
+header .brand{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:21px;letter-spacing:.2px}
+header .headerRight{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px}
+nav{display:flex;gap:8px;overflow-x:auto;background:var(--surface);padding:10px 12px;position:sticky;top:0;z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+nav button{border:0;border-radius:999px;padding:10px 16px;background:var(--green-tint);color:var(--green);white-space:nowrap;font-size:14px;font-weight:700;font-family:'Manrope',sans-serif;transition:.15s}
+nav button.on{background:linear-gradient(120deg,var(--mango),var(--mango-deep));color:var(--green-dark);box-shadow:0 3px 10px rgba(242,164,0,.35)}
+main{max-width:1000px;margin:auto;padding:16px 16px 40px}
+.status{padding:14px 16px;border-radius:var(--radius);background:#FFF7DE;margin-bottom:14px;font-weight:600;border:1px solid #FCE9AE}
+.card{background:var(--surface);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow);border:1px solid rgba(11,107,58,.06)}
+.grid,.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.statGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid rgba(11,107,58,.06)}
+.big{font-family:'Baloo 2',sans-serif;font-size:26px;font-weight:800;margin-top:4px;color:var(--green-dark)}
+.muted{color:var(--muted);font-size:12px}
+label{font-weight:700;font-size:13px;color:var(--green-dark)}
+h2{font-weight:800;color:var(--green-dark)}
+input,select{width:100%;padding:12px 14px;border:1.5px solid #E1E9DF;border-radius:12px;margin:6px 0 12px;background:#fff;font-family:'Manrope',sans-serif;font-size:14px;color:var(--ink)}
+input:focus,select:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(11,107,58,.12)}
+button{font-family:'Manrope',sans-serif;cursor:pointer}
+button.save{border:0;border-radius:12px;padding:11px 16px;background:linear-gradient(120deg,var(--green),var(--green-dark));color:#fff;font-weight:700;box-shadow:0 3px 10px rgba(11,107,58,.25);transition:.15s}
+button.save:active{transform:translateY(1px)}
+button.warn{background:#fff4e5;color:#8a4b00;box-shadow:none}
+button.danger{background:var(--danger);color:#fff;box-shadow:0 3px 10px rgba(196,41,30,.25)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px;text-align:left;white-space:nowrap;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);border-bottom:2px solid var(--green-tint)}
+td{padding:10px;border-bottom:1px solid #F0F3EE;text-align:left;white-space:nowrap}
+.wrap{overflow:auto}
+[hidden]{display:none!important}
+.badge{display:inline-block;padding:5px 10px;border-radius:999px;background:var(--green-tint);color:var(--green);font-size:12px;font-weight:800}
+.low{color:#b54708;font-weight:700}
+.out{color:var(--danger);font-weight:700}
+.notice{padding:12px;border-radius:10px;background:var(--green-tint)}
+.stat-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:8px}
+.stock-row-actions{display:flex;gap:6px}
+.login-chip{font-size:12px;opacity:.95}.admin-logged{display:inline-block!important}
+
+/* ===== Mobile-friendly sidebar navigation ===== */
+header{position:relative;justify-content:center;min-height:68px;padding:12px 58px}
+header .brand{font-size:22px}
+header .headerRight{position:absolute;right:14px;display:none}
+.menuToggle{position:absolute;left:14px;top:14px;width:42px;height:40px;border:0;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;z-index:20}
+.menuToggle:active{transform:scale(.97)}
+.sideMenuOverlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40;display:none;opacity:0;transition:opacity .2s}
+.sideMenu{position:fixed;left:0;top:0;bottom:0;width:min(340px,88vw);background:#fff;z-index:50;box-shadow:10px 0 35px rgba(0,0,0,.18);transform:translateX(-105%);transition:transform .25s ease;overflow-y:auto;overscroll-behavior:contain}
+.sideMenu.open{transform:translateX(0)}
+.sideMenuOverlay.open{display:block;opacity:1}
+.sideMenuHead{padding:22px 18px 16px;background:linear-gradient(135deg,var(--green),var(--green-dark));color:#fff;position:sticky;top:0;z-index:2}
+.sideMenuAccount{display:flex;align-items:center;gap:12px}
+.sideMenuAvatar{width:44px;height:44px;border-radius:50%;background:var(--mango);color:var(--green-dark);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0}
+.sideMenuIdentity{min-width:0}
+.sideMenuIdentity b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sideMenuIdentity span{display:block;font-size:11px;opacity:.82;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sideMenuActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.sideMenuActions button{border:0;border-radius:10px;padding:10px 8px;font-weight:700;font-size:12px}
+.sideMenuActions .switch{background:#fff;color:var(--green)}
+.sideMenuActions .logout{background:#c4291e;color:#fff}
+.sideNav{padding:12px}
+.sideNavTitle{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding:6px 10px 8px}
+.sideNav button{width:100%;display:flex;align-items:center;gap:11px;border:0;border-radius:12px;padding:12px 13px;background:transparent;color:var(--ink);font-size:14px;font-weight:700;text-align:left;margin-bottom:4px}
+.sideNav button:hover{background:var(--green-tint)}
+.sideNav button.on{background:linear-gradient(120deg,var(--mango),var(--mango-deep));color:var(--green-dark);box-shadow:0 3px 10px rgba(242,164,0,.22)}
+.sideNavIcon{width:25px;text-align:center;font-size:17px}
+.sideMenuClose{position:absolute;right:12px;top:12px;width:36px;height:36px;border:0;border-radius:10px;background:rgba(255,255,255,.13);color:#fff;font-size:20px}
+body.menuOpen{overflow:hidden}
+@media(min-width:701px){
+  .sideMenu{width:360px}
+}
+@media(max-width:700px){
+ .grid,.row{grid-template-columns:1fr}
+ .statGrid{grid-template-columns:1fr 1fr}
+ th,td{padding:8px}
+}
+</style>
+</head>
+<body>
+<div id="loginGate" style="display:flex;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;padding:18px;background:radial-gradient(1200px 800px at 15% -10%, #E8F6D9 0%, transparent 55%),radial-gradient(1000px 700px at 110% 110%, #FFE9B0 0%, transparent 50%),linear-gradient(160deg,var(--green-dark) 0%,var(--green) 55%,#12894F 100%);overflow:hidden">
+  <div style="position:absolute;width:260px;height:260px;border-radius:50%;background:var(--mango);opacity:.18;filter:blur(10px);top:-60px;left:-60px"></div>
+  <div style="position:absolute;width:220px;height:220px;border-radius:50%;background:#fff;opacity:.08;bottom:-80px;right:-40px"></div>
+  <div class="card" style="width:100%;max-width:400px;position:relative;z-index:1;border-radius:22px;padding:30px 26px">
+    <div style="text-align:center;margin-bottom:18px">
+      <div class="logo-badge" style="width:64px;height:64px;margin:0 auto 12px">
+        <svg viewBox="0 0 64 64" style="width:38px;height:38px"><path d="M18 26h28l-3 20a4 4 0 01-4 3.4H25a4 4 0 01-4-3.4l-3-20z" fill="#0B6B3A"/><path d="M24 26c0-6 3.6-10 8-10s8 4 8 10" stroke="#0B6B3A" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+      </div>
+      <h2 class="brand-font" style="margin:0;font-size:24px;color:var(--green-dark)">Gaon Mart</h2>
+      <div class="muted" style="margin-top:4px">Admin Panel · Secure Sign-in</div>
+    </div>
+    <label>Login with</label>
+    <select id="loginType">
+      <option value="email">📧 Email</option>
+      <option value="phone">📱 Mobile Number</option>
+    </select>
+    <label id="identityLabel">Admin Email</label>
+    <input id="loginIdentity" autocomplete="username" placeholder="admin@example.com">
+    <label>Password</label>
+    <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Enter password">
+    <button class="save" id="loginBtn" style="width:100%;padding:14px;font-size:15px">🔐 Login to Admin</button>
+    <button class="save" id="forgotBtn" style="width:100%;margin-top:8px;background:var(--green-tint)!important;color:var(--green)!important;box-shadow:none">Forgot Password</button>
+    <div id="loginMsg" class="muted" style="margin-top:10px;text-align:center"></div>
+  </div>
+</div>
+
+<header>
+  <button class="menuToggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+  <div class="logo-badge">
+    <svg viewBox="0 0 64 64"><path d="M18 26h28l-3 20a4 4 0 01-4 3.4H25a4 4 0 01-4-3.4l-3-20z" fill="#0B6B3A"/><path d="M24 26c0-6 3.6-10 8-10s8 4 8 10" stroke="#0B6B3A" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+  </div>
+  <span class="brand">Gaon Mart</span>
+</header>
+
+<div class="sideMenuOverlay" id="sideMenuOverlay"></div>
+<aside class="sideMenu" id="sideMenu" aria-hidden="true">
+  <div class="sideMenuHead">
+    <button class="sideMenuClose" id="sideMenuClose" aria-label="Close menu">×</button>
+    <div class="sideMenuAccount">
+      <div class="sideMenuAvatar" id="sideMenuAvatar">A</div>
+      <div class="sideMenuIdentity">
+        <b id="sideMenuAdminIdentity">Admin Panel</b>
+        <span id="sideMenuAdminType">Not logged in</span>
+      </div>
+    </div>
+    <div class="sideMenuActions">
+      <button class="switch" id="sideMenuSwitchBtn">⇄ Switch Account</button>
+      <button class="logout" id="sideMenuLogoutBtn">↪ Logout</button>
+    </div>
+  </div>
+  <div class="sideNav">
+    <div class="sideNavTitle">Admin Menu</div>
+    <button class="on" data-tab="dash"><span class="sideNavIcon">🏠</span>Dashboard</button>
+    <button data-tab="products"><span class="sideNavIcon">🛍️</span>Products</button>
+    <button data-tab="stock"><span class="sideNavIcon">📦</span>Stock</button>
+    <button data-tab="orders"><span class="sideNavIcon">🧾</span>Orders</button>
+    <button data-tab="categories"><span class="sideNavIcon">🗂️</span>Categories</button>
+    <button data-tab="customers"><span class="sideNavIcon">👥</span>Customers</button>
+    <button data-tab="banners"><span class="sideNavIcon">🎯</span>Banners</button>
+    <button data-tab="delivery"><span class="sideNavIcon">🚴</span>Delivery / Store</button>
+  </div>
+</aside>
+
+<!-- The original top navigation is kept in the DOM for compatibility, but is hidden visually. -->
+<nav id="legacyTopNav" style="display:none">
+  <button class="on" data-tab="dash">🏠 Dashboard</button>
+  <button data-tab="products">🛍️ Products</button>
+  <button data-tab="stock">📦 Stock</button>
+  <button data-tab="orders">🧾 Orders</button>
+  <button data-tab="categories">🗂️ Categories</button>
+  <button data-tab="customers">👥 Customers</button>
+  <button data-tab="banners">🎯 Banners</button>
+  <button data-tab="delivery">🚴 Delivery</button>
+</nav>
+
+<main id="adminContent" style="display:none">
+<div id="status" class="status">Connecting to database…</div>
+
+<section id="dash" hidden>
+<div class="card">
+  <b>🔐 Admin Account</b>
+  <div class="muted" style="margin-top:5px">Logged in account: <span id="dashboardAdminEmail">—</span></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+    <button class="save" id="dashboardLoginBtn">Login / Switch Account</button>
+    <button class="save danger" id="dashboardLogoutBtn">Logout</button>
+  </div>
+</div>
+<h2>Dashboard</h2>
+<div class="statGrid">
+ <div class="stat"><div class="stat-icon" style="background:#EAF6EE">🧾</div><div class="muted">Today's Orders</div><div class="big" id="todayOrders">0</div></div>
+ <div class="stat"><div class="stat-icon" style="background:#FFF3D6">⏳</div><div class="muted">Pending</div><div class="big" id="pendingOrders">0</div></div>
+ <div class="stat"><div class="stat-icon" style="background:#EAF6EE">💰</div><div class="muted">Today's Sales</div><div class="big" id="todaySales">₹0</div></div>
+ <div class="stat"><div class="stat-icon" style="background:#FDEAEA">⚠️</div><div class="muted">Low Stock</div><div class="big" id="dashboardLowStock">0</div></div>
+</div>
+<div class="card">
+<b>Service area</b>
+<p>Mosali, Surat, Gujarat + nearby villages</p>
+<button class="save" id="refreshDashboard">↻ Refresh Dashboard</button>
+</div>
+</section>
+
+<section id="products" hidden>
+<h2>Products</h2>
+<div class="card">
+<div class="row">
+<div><label>Product name</label><input id="name" placeholder="Tomato"></div>
+<div><label>Category</label><select id="cat"></select></div>
+</div>
+<div class="row">
+<div><label>Variant / quantity</label><input id="variant" placeholder="1 kg"></div>
+<div><label>MRP ₹ (optional)</label><input id="productMrp" type="number" min="0" placeholder="120"></div>
+</div>
+<div class="row">
+<div><label>Offer / Selling Price ₹</label><input id="price" type="number" min="0" placeholder="100"></div>
+<div><label>Stock</label><input id="productStock" type="number" min="0" placeholder="50"></div>
+</div>
+<label>Description</label>
+<input id="productDescription" placeholder="e.g. Taza dehati tamatar, khet se seedha">
+<label>Photos (maximum 7) — camera se lein ya gallery se chunein, app khud photo ko behtar (bright/sharp/halki file) karke rakhegi</label>
+<div style="display:flex;gap:8px;margin-bottom:8px">
+<button type="button" class="save" id="openCameraBtn" style="flex:1;background:var(--green-tint);color:var(--green);box-shadow:none">📷 Camera</button>
+<button type="button" class="save" id="openGalleryBtn" style="flex:1;background:var(--green-tint);color:var(--green);box-shadow:none">🖼️ Gallery</button>
+</div>
+<input id="productPhotoCamera" type="file" accept="image/*" capture="environment" style="display:none">
+<input id="productPhotoGallery" type="file" accept="image/*" multiple style="display:none">
+<div id="photoCountLabel" class="muted" style="margin-bottom:6px">0/7 photos</div>
+<div id="productPhotoPreview" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
+<div style="display:flex;gap:8px">
+<button class="save" id="saveProduct">Save Product</button>
+<button class="save" id="cancelEditProduct" style="display:none;background:#edf5ef;color:#176b3d">Cancel Edit</button>
+</div>
+</div>
+<div class="card">
+<input id="productSearch" placeholder="🔍 Product ya category search karein…">
+</div>
+<div class="card wrap">
+<table>
+<thead><tr><th>Photo</th><th>Product</th><th>Category</th><th>Variant</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="productRows"></tbody>
+</table>
+</div>
+</section>
+
+<section id="stock">
+<h2>📦 Stock Management</h2>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+<div>
+<b>Inventory</b>
+<div class="muted">Stock is deducted automatically when an order is accepted.</div>
+</div>
+<button class="save" id="refreshStock">↻ Refresh Stock</button>
+</div>
+</div>
+
+<div class="statGrid">
+ <div class="stat"><div class="muted">Products</div><div class="big" id="stockProducts">0</div></div>
+ <div class="stat"><div class="muted">Total Units</div><div class="big" id="stockUnits">0</div></div>
+ <div class="stat"><div class="muted">Low Stock</div><div class="big" id="stockLowCount">0</div></div>
+ <div class="stat"><div class="muted">Out of Stock</div><div class="big" id="stockOutCount">0</div></div>
+</div>
+
+<div class="card wrap">
+<table>
+<thead>
+<tr><th>Product</th><th>Variant</th><th>Price</th><th>Current Stock</th><th>Status</th><th>Adjust</th></tr>
+</thead>
+<tbody id="stockRows">
+<tr><td colspan="6">Stock will appear here.</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<section id="orders" hidden>
+<h2>Orders <button class="save" style="float:right" id="refreshOrders">↻ Refresh</button></h2>
+<div class="card">
+<input id="orderSearch" placeholder="🔍 Order ID, phone ya address search karein…">
+</div>
+<div id="orderList"></div>
+</section>
+
+<section id="customers" hidden>
+<h2>Customers</h2>
+<div class="card">
+<input id="customerSearch" placeholder="🔍 Naam ya phone search karein…">
+</div>
+<div id="customerList" class="card">Loading…</div>
+</section>
+
+<section id="banners" hidden>
+<h2>Offer Banners</h2>
+<div class="card">
+<label>Banner title (optional)</label>
+<input id="bannerTitle" placeholder="e.g. Diwali Dhamaka Offer">
+<label>Banner Photo</label>
+<input id="bannerPhoto" type="file" accept="image/*">
+<div id="bannerPhotoPreview" style="margin:8px 0"></div>
+<button class="save" id="saveBanner">Add Banner</button>
+</div>
+<div class="card wrap" id="bannerList">Loading…</div>
+</section>
+
+<section id="categories" hidden>
+<h2>Categories</h2>
+<div class="card">
+<label>New category name</label>
+<input id="newCategoryName" placeholder="e.g. Fruits">
+<button class="save" id="addCategoryBtn">Add Category</button>
+</div>
+<div class="card" id="catList">Loading…</div>
+</section>
+
+<section id="delivery" hidden>
+<h2>Delivery Settings</h2>
+<div class="card">
+<label>Store Location (dukaan ki exact jagah)</label>
+<div class="row">
+<div><label>Latitude</label><input id="storeLat" type="number" step="0.000001" placeholder="21.170240"></div>
+<div><label>Longitude</label><input id="storeLng" type="number" step="0.000001" placeholder="72.831062"></div>
+</div>
+<button class="save" id="getMyLocation" style="background:#edf5ef;color:#176b3d">📍 Dukaan ki current location use karein</button>
+<div id="storeLocationMsg" class="muted" style="margin-top:6px"></div>
+<hr style="margin:14px 0;border:none;border-top:1px solid #eee">
+<label>Delivery charge per km ₹</label>
+<input id="deliveryRate" value="3.50" type="number" min="0" step="0.01">
+<label>Minimum order value ₹</label>
+<input id="minOrderValue" value="0" type="number" min="0" step="0.01">
+<button class="save" id="saveDelivery">Save Settings</button>
+<div id="deliverySettingsMsg" class="muted" style="margin-top:8px"></div>
+</div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+
+const SUPABASE_URL = "https://dayhqgusooffpcvpdfxl.supabase.co";
+const SUPABASE_KEY = "sb_publishable_YfZ4zPMbCplUIdjTQv8Ciw_7mfLW47w";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function requireAdminSession(){
+  const {data:{session}} = await supabaseClient.auth.getSession();
+  const gate=document.getElementById("loginGate");
+  const content=document.getElementById("adminContent");
+  const userLabel=document.getElementById("adminUserLabel");
+
+  if(!session){
+    gate.style.display="flex";
+    content.style.display="none";
+    if(userLabel) userLabel.textContent="Admin Panel";
+    const sideIdentity=document.getElementById("sideMenuAdminIdentity");
+    const sideType=document.getElementById("sideMenuAdminType");
+    if(sideIdentity) sideIdentity.textContent="Admin Panel";
+    if(sideType) sideType.textContent="Login required";
+    return false;
+  }
+
+  gate.style.display="none";
+  content.style.display="block";
+  const identity=session.user.email || session.user.phone || "Admin";
+  if(userLabel) userLabel.textContent=identity;
+  const sideIdentity=document.getElementById("sideMenuAdminIdentity");
+  const sideType=document.getElementById("sideMenuAdminType");
+  const sideAvatar=document.getElementById("sideMenuAvatar");
+  if(sideIdentity) sideIdentity.textContent=identity;
+  if(sideType) sideType.textContent=session.user.email ? "Admin Email" : "Admin Mobile Number";
+  if(sideAvatar) sideAvatar.textContent=(identity.replace(/[^a-zA-Z0-9]/g,"").charAt(0)||"A").toUpperCase();
+  const dashIdentity=document.getElementById("dashboardAdminEmail");
+  if(dashIdentity) dashIdentity.textContent=identity;
+  window.__SUPABASE_ACCESS_TOKEN=session.access_token;
+  return true;
+}
+
+
+function updateLoginTypeUI(){
+  const type=document.getElementById("loginType").value;
+  const label=document.getElementById("identityLabel");
+  const input=document.getElementById("loginIdentity");
+  if(type==="phone"){
+    label.textContent="Admin Mobile Number";
+    input.placeholder="e.g. 9876543210";
+    input.inputMode="tel";
+  }else{
+    label.textContent="Admin Email";
+    input.placeholder="admin@example.com";
+    input.inputMode="email";
+  }
+}
+
+async function adminLogin(){
+  const type=document.getElementById("loginType").value;
+  let identity=document.getElementById("loginIdentity").value.trim();
+  if(type==="phone"){
+    identity=identity.replace(/\D/g,"");
+    if(identity.length===10) identity="+91"+identity;
+  }
+  const password=document.getElementById("loginPassword").value;
+  const msg=document.getElementById("loginMsg");
+
+  if(!identity || !password){
+    msg.textContent="Email/mobile and password required.";
+    return;
+  }
+
+  msg.textContent="Signing in…";
+  try{
+    const payload = type==="phone"
+      ? {phone: identity, password: password}
+      : {email: identity, password: password};
+
+    const {error}=await supabaseClient.auth.signInWithPassword(payload);
+    if(error) throw error;
+
+    const ok=await requireAdminSession();
+    if(!ok) throw new Error("Login session was not created.");
+    msg.textContent="";
+    await initialize();
+  }catch(e){
+    msg.textContent="Login failed: "+e.message;
+  }
+}
+
+async function forgotPassword(){
+  const type=document.getElementById("loginType").value;
+  const identity=document.getElementById("loginIdentity").value.trim();
+  const msg=document.getElementById("loginMsg");
+
+  if(type!=="email"){
+    msg.textContent="Password reset link email se hi bheja jayega. Pehle Email select karein.";
+    return;
+  }
+  if(!identity){
+    msg.textContent="Admin email enter karein.";
+    return;
+  }
+
+  try{
+    const {error}=await supabaseClient.auth.resetPasswordForEmail(identity,{
+      redirectTo: window.location.href
+    });
+    if(error) throw error;
+    msg.textContent="Password reset email sent.";
+  }catch(e){
+    msg.textContent="Reset failed: "+e.message;
+  }
+}
+
+async function logoutAdmin(){
+  await supabaseClient.auth.signOut();
+  window.location.reload();
+}
+
+
+let productVariants = [];
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>"']/g, function(m){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];
+  });
+}
+
+async function api(path, options){
+  options = options || {};
+  const headers = Object.assign({
+    "apikey": SUPABASE_KEY,
+    "Authorization": "Bearer " + (window.__SUPABASE_ACCESS_TOKEN || SUPABASE_KEY),
+    "Content-Type": "application/json"
+  }, options.headers || {});
+  const response = await fetch(SUPABASE_URL + "/rest/v1/" + path, Object.assign({}, options, {headers}));
+  const text = await response.text();
+  if(!response.ok) throw new Error(text || ("HTTP " + response.status));
+  return text ? JSON.parse(text) : null;
+}
+
+function setStatus(message, ok){
+  const el = document.getElementById("status");
+  el.textContent = message;
+  el.style.background = ok ? "#e8f5e9" : "#fff8e1";
+}
+
+async function showTab(id){
+  document.querySelectorAll("main section").forEach(function(section){
+    section.hidden = section.id !== id;
+  });
+
+  const target = document.getElementById(id);
+  if(target) target.hidden = false;
+
+  document.querySelectorAll(".sideNav button").forEach(function(button){
+    button.classList.toggle("on", button.dataset.tab === id);
+  });
+  document.querySelectorAll("#legacyTopNav button").forEach(function(button){
+    button.classList.toggle("on", button.dataset.tab === id);
+  });
+
+  if(id === "stock") loadStock();
+  if(id === "orders") loadOrders();
+  if(id === "products") loadProducts();
+  if(id === "categories") loadCategories();
+  if(id === "dash") loadDashboard();
+  if(id === "delivery") loadDeliverySettings();
+  if(id === "customers") loadCustomers();
+  if(id === "banners") loadBanners();
+}
+
+(function setupSidebarNavigation(){
+  const menu=document.getElementById("sideMenu");
+  const overlay=document.getElementById("sideMenuOverlay");
+  const toggle=document.getElementById("menuToggle");
+  const close=document.getElementById("sideMenuClose");
+  const main=document.querySelector("main");
+  let startX=0,startY=0,touching=false;
+
+  function openMenu(){
+    menu.classList.add("open");
+    overlay.classList.add("open");
+    document.body.classList.add("menuOpen");
+    toggle.setAttribute("aria-expanded","true");
+    menu.setAttribute("aria-hidden","false");
+  }
+  function closeMenu(){
+    menu.classList.remove("open");
+    overlay.classList.remove("open");
+    document.body.classList.remove("menuOpen");
+    toggle.setAttribute("aria-expanded","false");
+    menu.setAttribute("aria-hidden","true");
+  }
+  toggle.addEventListener("click",openMenu);
+  close.addEventListener("click",closeMenu);
+  overlay.addEventListener("click",closeMenu);
+
+  document.querySelectorAll(".sideNav button").forEach(function(button){
+    button.addEventListener("click",function(){
+      showTab(button.dataset.tab);
+      closeMenu();
+    });
+  });
+
+  document.getElementById("sideMenuSwitchBtn").addEventListener("click",function(){
+    closeMenu();
+    document.getElementById("loginGate").style.display="flex";
+    document.getElementById("loginIdentity").focus();
+  });
+  document.getElementById("sideMenuLogoutBtn").addEventListener("click",async function(){
+    closeMenu();
+    await logoutAdmin();
+  });
+
+  // Swipe from the left edge to open; swipe the drawer left to close.
+  document.addEventListener("touchstart",function(e){
+    if(e.touches.length!==1) return;
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+    touching=true;
+  },{passive:true});
+  document.addEventListener("touchend",function(e){
+    if(!touching) return;
+    touching=false;
+    const endX=e.changedTouches[0].clientX;
+    const endY=e.changedTouches[0].clientY;
+    const dx=endX-startX, dy=endY-startY;
+    if(Math.abs(dx)<70 || Math.abs(dx)<Math.abs(dy)*1.4) return;
+    if(!menu.classList.contains("open") && startX<35 && dx>0) openMenu();
+    else if(menu.classList.contains("open") && dx<0) closeMenu();
+  },{passive:true});
+
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeMenu(); });
+})();;
+
+let deliverySettingsId = null;
+
+async function loadDeliverySettings(){
+  const msg = document.getElementById("deliverySettingsMsg");
+  msg.textContent = "Loading…";
+  try{
+    const rows = await api("delivery_settings?select=id,rate_per_km,minimum_order_value,store_lat,store_lng&limit=1");
+    if(rows && rows[0]){
+      deliverySettingsId = rows[0].id;
+      document.getElementById("deliveryRate").value = rows[0].rate_per_km;
+      document.getElementById("minOrderValue").value = rows[0].minimum_order_value;
+      document.getElementById("storeLat").value = rows[0].store_lat ?? "";
+      document.getElementById("storeLng").value = rows[0].store_lng ?? "";
+      msg.textContent = "";
+    }else{
+      msg.textContent = "No delivery settings row found in database.";
+    }
+  }catch(error){
+    msg.textContent = "Load failed: " + error.message;
+  }
+}
+
+function useMyLocationForStore(){
+  const btn = document.getElementById("getMyLocation");
+  const msg = document.getElementById("storeLocationMsg");
+
+  if(!navigator.geolocation){
+    msg.textContent = "Yeh phone/browser location support nahi karta.";
+    return;
+  }
+
+  btn.textContent = "Location le rahe hain…";
+  msg.textContent = "";
+
+  navigator.geolocation.getCurrentPosition(function(position){
+    document.getElementById("storeLat").value = position.coords.latitude.toFixed(6);
+    document.getElementById("storeLng").value = position.coords.longitude.toFixed(6);
+    btn.textContent = "📍 Dukaan ki current location use karein";
+    msg.textContent = "Location mil gayi ✓ — ab neeche 'Save Settings' dabakar save karein.";
+  }, function(error){
+    btn.textContent = "📍 Dukaan ki current location use karein";
+    msg.textContent = "Location le nahi paye: " + error.message + " (Location permission allow karein aur dukaan ke andar/paas se try karein)";
+  }, {enableHighAccuracy:true, timeout:15000});
+}
+
+async function saveDeliverySettings(){
+  const rate = Number(document.getElementById("deliveryRate").value);
+  const minOrder = Number(document.getElementById("minOrderValue").value);
+  const latRaw = document.getElementById("storeLat").value;
+  const lngRaw = document.getElementById("storeLng").value;
+  const storeLat = latRaw === "" ? null : Number(latRaw);
+  const storeLng = lngRaw === "" ? null : Number(lngRaw);
+  const msg = document.getElementById("deliverySettingsMsg");
+
+  if(!Number.isFinite(rate) || rate < 0 || !Number.isFinite(minOrder) || minOrder < 0){
+    alert("Please enter valid numbers for rate and minimum order value.");
+    return;
+  }
+  if((storeLat !== null && !Number.isFinite(storeLat)) || (storeLng !== null && !Number.isFinite(storeLng))){
+    alert("Store location valid number honi chahiye, ya khali chhod dein.");
+    return;
+  }
+
+  if(!deliverySettingsId){
+    alert("Settings row not loaded yet. Please wait and try again.");
+    return;
+  }
+
+  try{
+    const updated = await api("delivery_settings?id=eq." + encodeURIComponent(deliverySettingsId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=representation"},
+      body:JSON.stringify({rate_per_km:rate, minimum_order_value:minOrder, store_lat:storeLat, store_lng:storeLng})
+    });
+
+    if(!updated || !updated.length){
+      msg.textContent = "Save nahi hua — Supabase me delivery_settings table ki UPDATE permission (RLS policy) missing lagti hai.";
+      return;
+    }
+
+    msg.textContent = "Saved ✓";
+    setTimeout(function(){ msg.textContent = ""; }, 3000);
+  }catch(error){
+    msg.textContent = "Save failed: " + error.message;
+  }
+}
+
+document.querySelectorAll("#legacyTopNav button").forEach(function(button){
+  button.addEventListener("click", function(){ showTab(button.dataset.tab); });
+});
+
+async function loadStock(){
+  const rows = document.getElementById("stockRows");
+  rows.innerHTML = '<tr><td colspan="6">Loading stock…</td></tr>';
+
+  try{
+    const variants = await api("product_variants?select=id,product_id,label,quantity,unit,price,stock,active&active=eq.true&order=created_at.desc");
+
+    if(!Array.isArray(variants)) throw new Error("Invalid stock response");
+
+    const productIds = variants.map(function(v){ return v.product_id; }).filter(Boolean);
+    const names = {};
+
+    for(const id of productIds){
+      try{
+        const result = await api("products?select=name&id=eq." + encodeURIComponent(id));
+        if(result && result[0]) names[id] = result[0].name;
+      }catch(e){}
+    }
+
+    let total = 0, low = 0, out = 0;
+
+    if(variants.length === 0){
+      rows.innerHTML = '<tr><td colspan="6">No active products found.</td></tr>';
+    }else{
+      rows.innerHTML = variants.map(function(v){
+        const stock = Math.max(0, Number(v.stock || 0));
+        total += stock;
+        if(stock === 0) out++;
+        else if(stock <= 5) low++;
+
+        const status = stock === 0 ? "OUT OF STOCK" : stock <= 5 ? "LOW STOCK" : "IN STOCK";
+        const cls = stock === 0 ? "out" : stock <= 5 ? "low" : "";
+
+        return '<tr>' +
+          '<td><b>' + esc(names[v.product_id] || "Product") + '</b></td>' +
+          '<td>' + esc(v.label || ((v.quantity || "") + " " + (v.unit || ""))) + '</td>' +
+          '<td>₹' + Number(v.price || 0).toFixed(0) + '</td>' +
+          '<td class="' + cls + '"><b>' + stock + '</b> ' + esc(v.unit || "") + '</td>' +
+          '<td><span class="badge">' + status + '</span></td>' +
+          '<td><div class="stock-row-actions">' +
+            '<button class="save" onclick="adjustStock(\'' + v.id + '\',-1)">−</button>' +
+            '<button class="save" onclick="adjustStock(\'' + v.id + '\',1)">+</button>' +
+            '<button class="save warn" onclick="setStock(\'' + v.id + '\',' + stock + ')">Set</button>' +
+          '</div></td>' +
+        '</tr>';
+      }).join("");
+    }
+
+    document.getElementById("stockProducts").textContent = variants.length;
+    document.getElementById("stockUnits").textContent = total;
+    document.getElementById("stockLowCount").textContent = low;
+    document.getElementById("stockOutCount").textContent = out;
+    document.getElementById("dashboardLowStock").textContent = low + out;
+
+    setStatus("Connected to Gaon Mart database ✓", true);
+  }catch(error){
+    rows.innerHTML =
+      '<tr><td colspan="6">' +
+      '<b>Stock could not be loaded.</b><br>' +
+      '<span class="muted">' + esc(error.message) + '</span><br><br>' +
+      '<button class="save" onclick="loadStock()">Retry</button>' +
+      '</td></tr>';
+    setStatus("Database request failed — see Stock section for details", false);
+  }
+}
+
+async function adjustStock(id, change){
+  try{
+    const currentRows = await api("product_variants?select=stock&id=eq." + encodeURIComponent(id));
+    if(!currentRows || !currentRows[0]) throw new Error("Product variant not found");
+
+    const current = Number(currentRows[0].stock || 0);
+    const next = Math.max(0, current + change);
+
+    await api("product_variants?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({stock:next})
+    });
+
+    await loadStock();
+    await loadProducts();
+  }catch(error){
+    alert("Stock update failed:\n" + error.message);
+  }
+}
+
+async function setStock(id, current){
+  const value = prompt("Enter exact stock quantity:", String(current));
+  if(value === null) return;
+
+  const next = Number(value);
+  if(!Number.isFinite(next) || next < 0){
+    alert("Please enter a valid stock number.");
+    return;
+  }
+
+  try{
+    await api("product_variants?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({stock:next})
+    });
+    await loadStock();
+    await loadProducts();
+  }catch(error){
+    alert("Stock update failed:\n" + error.message);
+  }
+}
+
+async function loadCategories(){
+  try{
+    const categories = await api("categories?select=id,name,active&active=eq.true&order=name");
+    const select = document.getElementById("cat");
+    const list = document.getElementById("catList");
+
+    select.innerHTML = (categories || []).map(function(c){
+      return '<option value="' + c.id + '">' + esc(c.name) + '</option>';
+    }).join("");
+
+    list.innerHTML = (categories || []).map(function(c){
+      const editCall = esc("editCategoryName(" + JSON.stringify(c.id) + "," + JSON.stringify(c.name) + ")");
+      const deleteCall = esc("deleteCategory(" + JSON.stringify(c.id) + "," + JSON.stringify(c.name) + ")");
+      return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #eee">' +
+        '<span>• ' + esc(c.name) + '</span>' +
+        '<div class="stock-row-actions">' +
+          '<button class="save" onclick="' + editCall + '">Edit</button>' +
+          '<button class="save danger" onclick="' + deleteCall + '">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }).join("") || "No categories found.";
+  }catch(error){
+    document.getElementById("catList").textContent = "Categories load failed: " + error.message;
+  }
+}
+
+async function addCategory(){
+  const input = document.getElementById("newCategoryName");
+  const name = input.value.trim();
+  if(!name){
+    alert("Category name enter karein.");
+    return;
+  }
+
+  try{
+    await api("categories", {
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({name:name, active:true})
+    });
+    input.value = "";
+    await loadCategories();
+  }catch(error){
+    alert("Category add failed:\n" + error.message);
+  }
+}
+
+async function editCategoryName(id, currentName){
+  const value = prompt("Category ka naya naam:", currentName);
+  if(value === null) return;
+  const name = value.trim();
+  if(!name) return;
+
+  try{
+    await api("categories?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({name:name})
+    });
+    await loadCategories();
+    await loadProducts();
+  }catch(error){
+    alert("Category update failed:\n" + error.message);
+  }
+}
+
+async function deleteCategory(id, name){
+  if(!confirm('"' + name + '" category delete karein? Isme jo products hain unki category "unassigned" jaisi dikhegi.')) return;
+
+  try{
+    await api("categories?id=eq." + encodeURIComponent(id), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({active:false})
+    });
+    await loadCategories();
+  }catch(error){
+    alert("Category delete failed:\n" + error.message);
+  }
+}
+
+let allProductRows = [];
+
+async function loadProducts(){
+  try{
+    productVariants = await api("product_variants?select=id,product_id,label,quantity,unit,price,mrp,stock,is_paused,active&active=eq.true&order=created_at.desc");
+
+    const ids = productVariants.map(function(v){return v.product_id;}).filter(Boolean);
+    const names = {};
+    const cats = {};
+    const descriptions = {};
+    const images = {};
+
+    for(const id of ids){
+      try{
+        const result = await api("products?select=name,category_id,description,image_url&id=eq." + encodeURIComponent(id));
+        if(result && result[0]){
+          names[id] = result[0].name;
+          cats[id] = result[0].category_id;
+          descriptions[id] = result[0].description;
+          images[id] = result[0].image_url;
+        }
+      }catch(e){}
+    }
+
+    const categories = await api("categories?select=id,name");
+    const categoryNames = {};
+    (categories || []).forEach(function(c){ categoryNames[c.id] = c.name; });
+
+    allProductRows = (productVariants || []).map(function(v){
+      return {
+        variant: v,
+        productName: names[v.product_id] || "Product",
+        categoryId: cats[v.product_id] || "",
+        categoryName: categoryNames[cats[v.product_id]] || "",
+        description: descriptions[v.product_id] || "",
+        imageUrl: images[v.product_id] || ""
+      };
+    });
+
+    renderProductRows(allProductRows);
+  }catch(error){
+    document.getElementById("productRows").innerHTML =
+      '<tr><td colspan="8">Products load failed: ' + esc(error.message) + '</td></tr>';
+  }
+}
+
+function renderProductRows(rows){
+  document.getElementById("productRows").innerHTML = rows.map(function(r){
+    const v = r.variant;
+    const stock = Number(v.stock || 0);
+    const editArgs = [v.id, v.product_id, r.productName, r.categoryId, v.label || "", Number(v.price || 0), stock, r.description, r.imageUrl, v.mrp ?? ""]
+      .map(function(a){ return JSON.stringify(a); }).join(",");
+    const editCall = esc("editProduct(" + editArgs + ")");
+    const deleteCall = esc("deleteProduct(" + JSON.stringify(v.id) + "," + JSON.stringify(r.productName) + ")");
+    const toggleCall = esc("toggleProductPause(" + JSON.stringify(v.id) + "," + JSON.stringify(!v.is_paused) + ")");
+    const thumb = r.imageUrl
+      ? '<img src="' + esc(r.imageUrl) + '" style="width:44px;height:44px;object-fit:cover;border-radius:8px" alt="">'
+      : '<div style="width:44px;height:44px;border-radius:8px;background:#edf5ef;display:flex;align-items:center;justify-content:center;font-size:18px">🛒</div>';
+    const priceCell = v.mrp && Number(v.mrp) > Number(v.price)
+      ? '<span style="text-decoration:line-through;color:#999">₹' + Number(v.mrp).toFixed(0) + '</span> ₹' + Number(v.price || 0).toFixed(0)
+      : '₹' + Number(v.price || 0).toFixed(0);
+    const statusBadge = v.is_paused
+      ? '<span class="badge" style="background:#fde3e3;color:#a11">OFF</span>'
+      : '<span class="badge" style="background:#e3fde8;color:#176b3d">ON</span>';
+    return '<tr>' +
+      '<td>' + thumb + '</td>' +
+      '<td>' + esc(r.productName) + '</td>' +
+      '<td>' + esc(r.categoryName) + '</td>' +
+      '<td>' + esc(v.label || "") + '</td>' +
+      '<td>' + priceCell + '</td>' +
+      '<td class="' + (stock <= 0 ? "out" : stock <= 5 ? "low" : "") + '">' + stock + '</td>' +
+      '<td><button class="save" onclick="' + toggleCall + '" style="padding:4px 10px">' + statusBadge + '</button></td>' +
+      '<td><div class="stock-row-actions">' +
+        '<button class="save" onclick="' + editCall + '">Edit</button>' +
+        '<button class="save danger" onclick="' + deleteCall + '">Delete</button>' +
+      '</div></td>' +
+    '</tr>';
+  }).join("") || '<tr><td colspan="8">No products found.</td></tr>';
+}
+
+document.getElementById("productSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  if(!q){ renderProductRows(allProductRows); return; }
+  renderProductRows(allProductRows.filter(function(r){
+    return r.productName.toLowerCase().includes(q) || r.categoryName.toLowerCase().includes(q);
+  }));
+});
+
+async function toggleProductPause(variantId, newPausedValue){
+  try{
+    await api("product_variants?id=eq." + encodeURIComponent(variantId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({is_paused:newPausedValue})
+    });
+    await loadProducts();
+  }catch(error){
+    alert("Status change failed:\n" + error.message);
+  }
+}
+
+let editingVariantId = null;
+let editingProductId = null;
+let editingImageUrl = "";
+
+let editingProductImages = []; // existing saved images: {id, image_url} when editing a product
+let pendingNewPhotos = []; // {blob, previewUrl} newly picked photos not yet uploaded
+
+const MAX_PRODUCT_PHOTOS = 7;
+
+function renderPhotoPicker(){
+  const grid = document.getElementById("productPhotoPreview");
+  const total = editingProductImages.length + pendingNewPhotos.length;
+  document.getElementById("photoCountLabel").textContent = total + "/" + MAX_PRODUCT_PHOTOS + " photos";
+
+  const existingThumbs = editingProductImages.map(function(img, i){
+    const call = esc("deleteProductImage(" + JSON.stringify(img.id) + ")");
+    return '<div style="position:relative"><img src="' + esc(img.image_url) + '" style="width:70px;height:70px;object-fit:cover;border-radius:8px">' +
+      '<button type="button" onclick="' + call + '" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;border:2px solid #fff;font-size:12px;line-height:1;padding:0">✕</button></div>';
+  }).join("");
+
+  const pendingThumbs = pendingNewPhotos.map(function(p, i){
+    const call = esc("removePendingPhoto(" + i + ")");
+    return '<div style="position:relative"><img src="' + esc(p.previewUrl) + '" style="width:70px;height:70px;object-fit:cover;border-radius:8px;border:2px solid var(--mango)">' +
+      '<button type="button" onclick="' + call + '" style="position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;background:var(--danger);color:#fff;border:2px solid #fff;font-size:12px;line-height:1;padding:0">✕</button></div>';
+  }).join("");
+
+  grid.innerHTML = existingThumbs + pendingThumbs;
+}
+
+function removePendingPhoto(index){
+  URL.revokeObjectURL(pendingNewPhotos[index].previewUrl);
+  pendingNewPhotos.splice(index, 1);
+  renderPhotoPicker();
+}
+
+async function deleteProductImage(imageId){
+  if(!confirm("Yeh photo delete karein?")) return;
+  try{
+    const img = editingProductImages.find(function(i){ return i.id === imageId; });
+    await api("product_images?id=eq." + encodeURIComponent(imageId), {method:"DELETE", headers:{"Prefer":"return=minimal"}});
+    if(img){
+      const path = extractStoragePath(img.image_url, "product-images");
+      if(path) await supabaseClient.storage.from("product-images").remove([path]);
+    }
+    editingProductImages = editingProductImages.filter(function(i){ return i.id !== imageId; });
+    renderPhotoPicker();
+  }catch(error){
+    alert("Photo delete failed:\n" + error.message);
+  }
+}
+
+function extractStoragePath(publicUrl, bucket){
+  const marker = "/object/public/" + bucket + "/";
+  const idx = (publicUrl || "").indexOf(marker);
+  return idx === -1 ? null : publicUrl.slice(idx + marker.length);
+}
+
+// Auto-enhance: resizes large photos, stretches contrast, gives a mild sharpness/saturation
+// lift, and compresses to JPEG — makes camera shots look brighter and load faster in the shop app.
+function autoEnhancePhoto(file){
+  return new Promise(function(resolve, reject){
+    const img = new Image();
+    img.onload = function(){
+      const maxSide = 1600;
+      let w = img.width, h = img.height;
+      if(w > maxSide || h > maxSide){
+        const scale = maxSide / Math.max(w, h);
+        w = Math.round(w * scale);
+        h = Math.round(h * scale);
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, w, h);
+
+      try{
+        const imageData = ctx.getImageData(0, 0, w, h);
+        const d = imageData.data;
+        let min = 255, max = 0;
+        for(let i = 0; i < d.length; i += 4){
+          const lum = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+          if(lum < min) min = lum;
+          if(lum > max) max = lum;
+        }
+        const range = Math.max(max - min, 1);
+
+        for(let i = 0; i < d.length; i += 4){
+          const gray = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+          for(let c = 0; c < 3; c++){
+            let v = d[i+c];
+            v = (v - min) * 255 / range; // auto contrast stretch
+            v = v + (v - gray) * 0.12;   // mild saturation lift
+            d[i+c] = Math.max(0, Math.min(255, v));
+          }
+        }
+        ctx.putImageData(imageData, 0, 0);
+      }catch(e){ /* if canvas is tainted or unsupported, keep the plain resized image */ }
+
+      canvas.toBlob(function(blob){
+        if(!blob) return reject(new Error("Photo process failed"));
+        resolve(blob);
+      }, "image/jpeg", 0.85);
+    };
+    img.onerror = function(){ reject(new Error("Photo load failed")); };
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+async function handlePhotoFilesSelected(files){
+  const total = editingProductImages.length + pendingNewPhotos.length;
+  const room = MAX_PRODUCT_PHOTOS - total;
+  if(room <= 0){
+    alert("Maximum " + MAX_PRODUCT_PHOTOS + " photos allowed hain. Pehle koi photo hatayein.");
+    return;
+  }
+
+  const toProcess = Array.from(files).slice(0, room);
+  if(files.length > room){
+    alert("Sirf " + room + " aur photo add ho sakti hai (max " + MAX_PRODUCT_PHOTOS + ").");
+  }
+
+  for(const file of toProcess){
+    try{
+      const enhancedBlob = await autoEnhancePhoto(file);
+      pendingNewPhotos.push({blob: enhancedBlob, previewUrl: URL.createObjectURL(enhancedBlob)});
+    }catch(e){
+      pendingNewPhotos.push({blob: file, previewUrl: URL.createObjectURL(file)});
+    }
+  }
+  renderPhotoPicker();
+}
+
+function editProduct(variantId, productId, productName, categoryId, label, price, stock, description, imageUrl, mrp){
+  document.getElementById("productMrp").value = mrp || "";
+  editingVariantId = variantId;
+  editingProductId = productId;
+  editingImageUrl = imageUrl || "";
+  pendingNewPhotos.forEach(function(p){ URL.revokeObjectURL(p.previewUrl); });
+  pendingNewPhotos = [];
+  editingProductImages = [];
+
+  document.getElementById("name").value = productName;
+  document.getElementById("cat").value = categoryId;
+  document.getElementById("variant").value = label;
+  document.getElementById("price").value = price;
+  document.getElementById("productStock").value = stock;
+  document.getElementById("productDescription").value = description || "";
+
+  renderPhotoPicker();
+
+  api("product_images?select=id,image_url&product_id=eq." + encodeURIComponent(productId) + "&order=sort_order")
+    .then(function(images){
+      editingProductImages = images || [];
+      renderPhotoPicker();
+    })
+    .catch(function(){});
+
+  document.getElementById("saveProduct").textContent = "Update Product";
+  document.getElementById("cancelEditProduct").style.display = "inline-block";
+  document.getElementById("products").scrollIntoView({behavior:"smooth"});
+}
+
+function cancelEditProduct(){
+  editingVariantId = null;
+  editingProductId = null;
+  editingImageUrl = "";
+  pendingNewPhotos.forEach(function(p){ URL.revokeObjectURL(p.previewUrl); });
+  pendingNewPhotos = [];
+  editingProductImages = [];
+  document.getElementById("name").value = "";
+  document.getElementById("variant").value = "";
+  document.getElementById("price").value = "";
+  document.getElementById("productStock").value = "";
+  document.getElementById("productMrp").value = "";
+  document.getElementById("productDescription").value = "";
+  renderPhotoPicker();
+  document.getElementById("saveProduct").textContent = "Save Product";
+  document.getElementById("cancelEditProduct").style.display = "none";
+}
+
+async function deleteProduct(variantId, productName){
+  if(!confirm('"' + productName + '" ko delete karein? Yeh list se hat jayega.')) return;
+
+  try{
+    await api("product_variants?id=eq." + encodeURIComponent(variantId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({active:false})
+    });
+
+    if(editingVariantId === variantId) cancelEditProduct();
+
+    await loadProducts();
+    await loadStock();
+  }catch(error){
+    alert("Delete failed:\n" + error.message);
+  }
+}
+
+async function uploadProductPhoto(blob, productId, index){
+  const path = "products/" + productId + "/" + Date.now() + "-" + index + "-" + Math.random().toString(36).slice(2) + ".jpg";
+
+  const {error: uploadError} = await supabaseClient.storage
+    .from("product-images")
+    .upload(path, blob, {upsert:false, contentType:"image/jpeg"});
+
+  if(uploadError) throw uploadError;
+
+  const {data} = supabaseClient.storage.from("product-images").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+
+async function saveProduct(){
+  const name = document.getElementById("name").value.trim();
+  const category = document.getElementById("cat").value;
+  const variant = document.getElementById("variant").value.trim();
+  const price = Number(document.getElementById("price").value);
+  const stock = Number(document.getElementById("productStock").value || 0);
+  const mrpRaw = document.getElementById("productMrp").value;
+  const mrp = mrpRaw === "" ? null : Number(mrpRaw);
+  const description = document.getElementById("productDescription").value.trim();
+
+  if(!name || !category || !variant || !Number.isFinite(price) || price < 0 || !Number.isFinite(stock) || stock < 0){
+    alert("Product, category, variant, price and stock are required.");
+    return;
+  }
+  if(mrp !== null && (!Number.isFinite(mrp) || mrp < 0)){
+    alert("MRP valid number honi chahiye, ya khali chhod dein.");
+    return;
+  }
+
+  const saveBtn = document.getElementById("saveProduct");
+  const originalLabel = saveBtn.textContent;
+
+  try{
+    let productId = editingVariantId ? editingProductId : null;
+
+    if(!editingVariantId){
+      const product = await api("products", {
+        method:"POST",
+        headers:{"Prefer":"return=representation"},
+        body:JSON.stringify({name:name, category_id:category, active:true, description:description || null, image_url:null})
+      });
+      productId = product[0].id;
+    }
+
+    // Upload any newly-picked photos now that we have a product id
+    const uploadedUrls = [];
+    if(pendingNewPhotos.length){
+      saveBtn.disabled = true;
+      for(let i = 0; i < pendingNewPhotos.length; i++){
+        saveBtn.textContent = "Uploading photo " + (i+1) + "/" + pendingNewPhotos.length + "…";
+        const url = await uploadProductPhoto(pendingNewPhotos[i].blob, productId, i);
+        uploadedUrls.push(url);
+      }
+      const startOrder = editingProductImages.length;
+      for(let i = 0; i < uploadedUrls.length; i++){
+        await api("product_images", {
+          method:"POST",
+          headers:{"Prefer":"return=minimal"},
+          body:JSON.stringify({product_id:productId, image_url:uploadedUrls[i], sort_order:startOrder + i})
+        });
+      }
+    }
+
+    const coverImageUrl = (editingProductImages[0] && editingProductImages[0].image_url) || uploadedUrls[0] || null;
+
+    if(editingVariantId){
+      await api("products?id=eq." + encodeURIComponent(editingProductId), {
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({name:name, category_id:category, description:description || null, image_url:coverImageUrl})
+      });
+
+      await api("product_variants?id=eq." + encodeURIComponent(editingVariantId), {
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({label:variant, price:price, mrp:mrp, stock:stock})
+      });
+
+      cancelEditProduct();
+      await loadProducts();
+      await loadStock();
+      alert("Product updated ✓");
+      return;
+    }
+
+    await api("products?id=eq." + encodeURIComponent(productId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({image_url:coverImageUrl})
+    });
+
+    await api("product_variants", {
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({
+        product_id:productId,
+        label:variant,
+        quantity:1,
+        unit:"pcs",
+        price:price,
+        mrp:mrp,
+        stock:stock,
+        active:true
+      })
+    });
+
+    document.getElementById("name").value = "";
+    document.getElementById("variant").value = "";
+    document.getElementById("price").value = "";
+    document.getElementById("productStock").value = "";
+    document.getElementById("productMrp").value = "";
+    document.getElementById("productDescription").value = "";
+    pendingNewPhotos.forEach(function(p){ URL.revokeObjectURL(p.previewUrl); });
+    pendingNewPhotos = [];
+    editingProductImages = [];
+    renderPhotoPicker();
+
+    await loadProducts();
+    await loadStock();
+    alert("Product saved ✓");
+  }catch(error){
+    alert("Save failed:\n" + error.message);
+  }finally{
+    saveBtn.disabled = false;
+    saveBtn.textContent = editingVariantId ? "Update Product" : "Save Product";
+  }
+}
+
+function orderActionButtons(orderId, status){
+  const s = status || "pending";
+  let buttons = "";
+
+  function actionCall(newStatus){
+    return esc("updateOrderStatus(" + JSON.stringify(orderId) + "," + JSON.stringify(newStatus) + "," + JSON.stringify(s) + ")");
+  }
+
+  if(s === "pending" || s === "placed"){
+    buttons += '<button class="save" onclick="' + actionCall("accepted") + '">✓ Accept</button>';
+    buttons += '<button class="save danger" onclick="' + actionCall("cancelled") + '">Cancel</button>';
+  }else if(s === "accepted"){
+    buttons += '<button class="save" onclick="' + actionCall("out_for_delivery") + '">🚴 Out for Delivery</button>';
+    buttons += '<button class="save danger" onclick="' + actionCall("cancelled") + '">Cancel</button>';
+  }else if(s === "out_for_delivery"){
+    buttons += '<button class="save" onclick="' + actionCall("delivered") + '">📦 Mark Delivered</button>';
+  }
+
+  return buttons ? '<div class="stock-row-actions" style="margin-top:10px">' + buttons + '</div>' : "";
+}
+
+let allOrders = [];
+
+async function loadOrders(){
+  const box = document.getElementById("orderList");
+  box.innerHTML = '<div class="card">Loading orders…</div>';
+
+  try{
+    allOrders = await api("orders?select=*&order=created_at.desc&limit=100");
+
+    if(!allOrders || !allOrders.length){
+      box.innerHTML = '<div class="card">No orders yet.</div>';
+      return;
+    }
+
+    renderOrderList(allOrders);
+  }catch(error){
+    box.innerHTML = '<div class="card">Orders load failed: ' + esc(error.message) + '</div>';
+  }
+}
+
+function renderOrderList(orders){
+  const box = document.getElementById("orderList");
+  box.innerHTML = orders.map(function(o){
+    const editChargeCall = esc("editDeliveryCharge(" + JSON.stringify(o.id) + "," + JSON.stringify(Number(o.delivery_charge || 0)) + "," + JSON.stringify(Number(o.subtotal || 0)) + ")");
+    return '<div class="card">' +
+      '<b>Order #' + esc(String(o.id).slice(0,8)) + '</b>' +
+      '<p>Phone: ' + esc(o.phone || "—") + '<br>Address: ' + esc(o.delivery_address || "—") + '</p>' +
+      '<p>Distance: ' + esc(o.distance_km ?? "—") + ' km<br>' +
+      'Subtotal: ₹' + Number(o.subtotal || 0).toFixed(0) + ' + Delivery: ₹' + Number(o.delivery_charge || 0).toFixed(0) +
+      ' <button class="save" style="padding:2px 8px;font-size:12px" onclick="' + editChargeCall + '">✏️ Edit</button><br>' +
+      '<b>Total: ₹' + Number(o.total || 0).toFixed(0) + '</b></p>' +
+      '<p>Status: <span class="badge">' + esc((o.order_status || "pending").replace(/_/g," ").toUpperCase()) + '</span></p>' +
+      orderActionButtons(o.id, o.order_status) +
+    '</div>';
+  }).join("") || '<div class="card">Koi matching order nahi mili.</div>';
+}
+
+async function editDeliveryCharge(orderId, currentCharge, subtotal){
+  const value = prompt("Delivery charge (₹) — automatic calculate hua tha ₹" + currentCharge.toFixed(0) + ". Naya amount likhein:", currentCharge);
+  if(value === null) return;
+  const newCharge = Number(value);
+  if(!Number.isFinite(newCharge) || newCharge < 0){
+    alert("Valid number likhein.");
+    return;
+  }
+
+  try{
+    await api("orders?id=eq." + encodeURIComponent(orderId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({delivery_charge:newCharge, total:subtotal + newCharge})
+    });
+    await loadOrders();
+  }catch(error){
+    alert("Delivery charge update failed:\n" + error.message);
+  }
+}
+
+document.getElementById("orderSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  if(!q){ renderOrderList(allOrders); return; }
+  renderOrderList(allOrders.filter(function(o){
+    return String(o.id).toLowerCase().includes(q) ||
+      (o.phone || "").toLowerCase().includes(q) ||
+      (o.delivery_address || "").toLowerCase().includes(q);
+  }));
+});
+
+async function adjustStockForOrder(orderId, direction){
+  // direction: 1 to deduct stock (order accepted), -1 to restore stock (order cancelled after being accepted)
+  const items = await api("order_items?select=product_variant_id,quantity&order_id=eq." + encodeURIComponent(orderId));
+
+  for(const item of (items || [])){
+    if(!item.product_variant_id) continue;
+    try{
+      const rows = await api("product_variants?select=stock&id=eq." + encodeURIComponent(item.product_variant_id));
+      if(!rows || !rows[0]) continue;
+      const current = Number(rows[0].stock || 0);
+      const change = Number(item.quantity || 0) * direction;
+      const next = Math.max(0, current - change);
+      await api("product_variants?id=eq." + encodeURIComponent(item.product_variant_id), {
+        method:"PATCH",
+        headers:{"Prefer":"return=minimal"},
+        body:JSON.stringify({stock:next})
+      });
+    }catch(e){
+      console.error("Stock adjust failed for item", item, e);
+    }
+  }
+}
+
+async function updateOrderStatus(orderId, newStatus, currentStatus){
+  const labels = {
+    accepted:"Accept karna",
+    out_for_delivery:"Out for Delivery mark karna",
+    delivered:"Delivered mark karna",
+    cancelled:"Cancel karna"
+  };
+  if(!confirm((labels[newStatus] || "Status change karna") + " confirm karein?")) return;
+
+  try{
+    if(newStatus === "accepted" && (currentStatus === "pending" || currentStatus === "placed")){
+      await adjustStockForOrder(orderId, 1);
+    }
+    if(newStatus === "cancelled" && (currentStatus === "accepted" || currentStatus === "out_for_delivery")){
+      await adjustStockForOrder(orderId, -1);
+    }
+
+    await api("orders?id=eq." + encodeURIComponent(orderId), {
+      method:"PATCH",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({order_status:newStatus})
+    });
+
+    await loadOrders();
+    await loadStock();
+    await loadDashboard();
+  }catch(error){
+    alert("Status update failed:\n" + error.message);
+  }
+}
+
+async function loadDashboard(){
+  try{
+    const orders = await api("orders?select=id,created_at,order_status,total&order=created_at.desc&limit=500");
+    const variants = await api("product_variants?select=stock&active=eq.true");
+
+    const today = new Date().toISOString().slice(0,10);
+    const todayOrders = (orders || []).filter(function(o){
+      return String(o.created_at || "").slice(0,10) === today;
+    });
+
+    document.getElementById("todayOrders").textContent = todayOrders.length;
+    document.getElementById("pendingOrders").textContent =
+      (orders || []).filter(function(o){ return ["pending","placed"].includes(o.order_status); }).length;
+
+    const sales = todayOrders
+      .filter(function(o){ return o.order_status !== "cancelled"; })
+      .reduce(function(sum,o){ return sum + Number(o.total || 0); },0);
+
+    document.getElementById("todaySales").textContent = "₹" + sales.toFixed(0);
+    document.getElementById("dashboardLowStock").textContent =
+      (variants || []).filter(function(v){ return Number(v.stock || 0) <= 5; }).length;
+  }catch(error){}
+}
+
+document.getElementById("loginBtn").addEventListener("click", adminLogin);
+document.getElementById("loginType").addEventListener("change", updateLoginTypeUI);
+supabaseClient.auth.onAuthStateChange(function(){
+  setTimeout(requireAdminSession, 0);
+});
+updateLoginTypeUI();
+document.getElementById("forgotBtn").addEventListener("click", forgotPassword);
+document.getElementById("dashboardLoginBtn").addEventListener("click", function(){
+  document.getElementById("loginGate").style.display="flex";
+});
+document.getElementById("dashboardLogoutBtn").addEventListener("click", logoutAdmin);
+document.getElementById("refreshStock").addEventListener("click", loadStock);
+document.getElementById("refreshOrders").addEventListener("click", loadOrders);
+document.getElementById("refreshDashboard").addEventListener("click", loadDashboard);
+document.getElementById("saveProduct").addEventListener("click", saveProduct);
+document.getElementById("cancelEditProduct").addEventListener("click", cancelEditProduct);
+document.getElementById("saveDelivery").addEventListener("click", saveDeliverySettings);
+document.getElementById("getMyLocation").addEventListener("click", useMyLocationForStore);
+document.getElementById("addCategoryBtn").addEventListener("click", addCategory);
+document.getElementById("openCameraBtn").addEventListener("click", function(){
+  document.getElementById("productPhotoCamera").click();
+});
+document.getElementById("openGalleryBtn").addEventListener("click", function(){
+  document.getElementById("productPhotoGallery").click();
+});
+document.getElementById("productPhotoCamera").addEventListener("change", function(){
+  if(this.files.length) handlePhotoFilesSelected(this.files);
+  this.value = "";
+});
+document.getElementById("productPhotoGallery").addEventListener("change", function(){
+  if(this.files.length) handlePhotoFilesSelected(this.files);
+  this.value = "";
+});
+document.getElementById("bannerPhoto").addEventListener("change", function(){
+  const file = this.files[0];
+  const preview = document.getElementById("bannerPhotoPreview");
+  if(!file){ preview.innerHTML = ""; return; }
+  preview.innerHTML = '<img src="' + URL.createObjectURL(file) + '" style="width:100%;max-width:260px;border-radius:8px">';
+});
+document.getElementById("saveBanner").addEventListener("click", saveBanner);
+document.getElementById("customerSearch").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  if(!q){ renderCustomerList(allCustomers); return; }
+  renderCustomerList(allCustomers.filter(function(c){
+    return (c.name || "").toLowerCase().includes(q) || (c.phone || "").toLowerCase().includes(q);
+  }));
+});
+
+let allCustomers = [];
+
+async function loadCustomers(){
+  const box = document.getElementById("customerList");
+  box.innerHTML = "Loading…";
+
+  try{
+    const orders = await api("orders?select=phone,delivery_address,total,order_status,created_at&order=created_at.desc&limit=500");
+    const byPhone = {};
+
+    (orders || []).forEach(function(o){
+      const phone = o.phone || "Unknown";
+      if(!byPhone[phone]){
+        byPhone[phone] = {phone:phone, address:o.delivery_address || "", orderCount:0, totalSpent:0, lastOrder:o.created_at};
+      }
+      byPhone[phone].orderCount += 1;
+      if(o.order_status !== "cancelled") byPhone[phone].totalSpent += Number(o.total || 0);
+      if(!byPhone[phone].address && o.delivery_address) byPhone[phone].address = o.delivery_address;
+    });
+
+    allCustomers = Object.values(byPhone).sort(function(a,b){
+      return new Date(b.lastOrder) - new Date(a.lastOrder);
+    });
+
+    renderCustomerList(allCustomers);
+  }catch(error){
+    box.innerHTML = "Customers load failed: " + esc(error.message);
+  }
+}
+
+function renderCustomerList(list){
+  const box = document.getElementById("customerList");
+  box.innerHTML = list.map(function(c){
+    return '<div style="padding:10px 0;border-bottom:1px solid #eee">' +
+      '<b>' + esc(c.phone) + '</b><br>' +
+      '<span class="muted">' + esc(c.address || "Address not set") + '</span><br>' +
+      'Orders: ' + c.orderCount + ' · Total spent: ₹' + c.totalSpent.toFixed(0) +
+    '</div>';
+  }).join("") || "Koi customer nahi mila.";
+}
+
+async function loadBanners(){
+  const box = document.getElementById("bannerList");
+  box.innerHTML = "Loading…";
+
+  try{
+    const banners = await api("banners?select=*&order=sort_order,created_at.desc");
+
+    box.innerHTML = (banners || []).map(function(b){
+      const deleteCall = esc("deleteBanner(" + JSON.stringify(b.id) + ")");
+      return '<div style="margin-bottom:14px">' +
+        '<img src="' + esc(b.image_url) + '" style="width:100%;border-radius:10px;display:block">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">' +
+          '<span>' + esc(b.title || "(No title)") + '</span>' +
+          '<button class="save danger" onclick="' + deleteCall + '">Delete</button>' +
+        '</div>' +
+      '</div>';
+    }).join("") || "Koi banner nahi hai.";
+  }catch(error){
+    box.innerHTML = "Banners load failed: " + esc(error.message);
+  }
+}
+
+async function saveBanner(){
+  const title = document.getElementById("bannerTitle").value.trim();
+  const photoFile = document.getElementById("bannerPhoto").files[0];
+  const btn = document.getElementById("saveBanner");
+
+  if(!photoFile){
+    alert("Banner ke liye photo select karein.");
+    return;
+  }
+
+  try{
+    btn.textContent = "Uploading…";
+    btn.disabled = true;
+
+    const ext = (photoFile.name.split(".").pop() || "jpg").toLowerCase();
+    const path = "banners/" + Date.now() + "-" + Math.random().toString(36).slice(2) + "." + ext;
+
+    const {error: uploadError} = await supabaseClient.storage
+      .from("banner-images")
+      .upload(path, photoFile, {upsert:false});
+    if(uploadError) throw uploadError;
+
+    const {data} = supabaseClient.storage.from("banner-images").getPublicUrl(path);
+
+    await api("banners", {
+      method:"POST",
+      headers:{"Prefer":"return=minimal"},
+      body:JSON.stringify({title:title || null, image_url:data.publicUrl, active:true})
+    });
+
+    document.getElementById("bannerTitle").value = "";
+    document.getElementById("bannerPhoto").value = "";
+    document.getElementById("bannerPhotoPreview").innerHTML = "";
+
+    await loadBanners();
+  }catch(error){
+    alert("Banner save failed:\n" + error.message);
+  }finally{
+    btn.textContent = "Add Banner";
+    btn.disabled = false;
+  }
+}
+
+async function deleteBanner(id){
+  if(!confirm("Yeh banner delete karein?")) return;
+
+  try{
+    await api("banners?id=eq." + encodeURIComponent(id), {method:"DELETE", headers:{"Prefer":"return=minimal"}});
+    await loadBanners();
+  }catch(error){
+    alert("Delete failed:\n" + error.message);
+  }
+}
+
+async function initialize(){
+  if(!(await requireAdminSession())) return;
+  // Dashboard is the default screen after login.
+  showTab("dash");
+  try{
+    await loadStock();
+    setStatus("Connected to Gaon Mart database ✓", true);
+    // Load the other panels in the background.
+    loadCategories().catch(console.error);
+    loadProducts().catch(console.error);
+    loadDashboard().catch(console.error);
+  }catch(error){
+    setStatus("Database request failed — tap Refresh Stock", false);
+    console.error(error);
+  }
+}
+
+window.addEventListener("DOMContentLoaded", initialize);
+</script>
+</body>
+</html>
